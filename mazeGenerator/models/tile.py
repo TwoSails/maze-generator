@@ -1,7 +1,7 @@
 """
 File: tile.py
 Date Created: 31/10/22
-Description: This file will contain the tile class
+Description: This is the Tile class which handles the single tile with composition of edges and transformations
 """
 # Python Modules
 import os
@@ -29,13 +29,22 @@ class Tile:
         self.__resolution: int = 3
 
     def __setBasePath(self) -> str:
-        dataPath = self.__config.dataPath
+        """
+        Fixes config path
+        :return:
+        """
+        dataPath = self.__config.get("dataPath")
         if dataPath[-1] != "/":
             dataPath = f"{dataPath}/"
 
         return dataPath
 
     def setName(self, name: str) -> Response:
+        """
+        Setter method which validates the tile being loading exists
+        :param name: Tile name
+        :return: Response
+        """
         if self.__tileSetName == "":
             return Err(TileNameNotSet)
         if name not in os.listdir(self.makeFilePath()):
@@ -44,10 +53,19 @@ class Tile:
         return Ok(name)
 
     def getName(self) -> str:
+        """
+        Getter method for tile name
+        :return: tile name
+        """
         return self.__name
 
-    def setTileSet(self, name: str):
-        if name not in os.listdir(self.__config.dataPath):
+    def setTileSet(self, name: str) -> Response:
+        """
+        Setter method for tile set name with validation
+        :param name:
+        :return:
+        """
+        if name not in os.listdir(self.__config.get("dataPath")):
             return Err(TileSetDoesNotExist)
         self.__tileSetName = name
         return Ok(name)
@@ -55,7 +73,12 @@ class Tile:
     def getTileSet(self) -> str:
         return self.__tileSetName
 
-    def setResolution(self, res: int):
+    def setResolution(self, res: int) -> Response:
+        """
+        Setter method with validation for inputted resolution
+        :param res: Pixel resolution of tile
+        :return:
+        """
         if isinstance(res, str):
             try:
                 res = int(res)
@@ -67,7 +90,7 @@ class Tile:
             return Err(InvalidResolution)
 
         self.__resolution = res
-        return self.__resolution
+        return Ok(self.__resolution)
 
     def getResolution(self) -> int:
         return self.__resolution
@@ -82,9 +105,8 @@ class Tile:
     def loadImage(self):
         pass
 
-    def getEdge(self, dir: str):
+    def getEdge(self, direction: str):
         pass
 
     def applyTransformations(self):
         pass
-
