@@ -40,7 +40,13 @@ class Edge:
             self.__yAxis = [args[3], args[1]]
             self.__xAxis = [args[2], args[0]]
 
-        print(self.__yAxis, self.__xAxis)
+        for i, x in enumerate(self.__xAxis):
+            if not isinstance(x, str):
+                self.__xAxis[i] = ""
+
+        for i, y in enumerate(self.__yAxis):
+            if not isinstance(y, str):
+                self.__yAxis[i] = ""
 
     def positiveX(self):
         """
