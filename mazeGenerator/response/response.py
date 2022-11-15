@@ -1,12 +1,21 @@
+from typing import Any
+
+
 class Response:
-    def __init__(self, success: bool, data) -> None:
+    def __init__(self, success: bool, data: Any, error) -> None:
         self.success = success
         self.data = data
+        self.error = error
+
+    def __repr__(self):
+        return f"Response<{self.success=}, {self.data=}, {self.error=}>"
+
 
 class Ok(Response):
-    def __init__(self, data) -> None:
-        super().__init__(True, data)
+    def __init__(self, data=None) -> None:
+        super().__init__(True, data, None)
+
 
 class Err(Response):
-    def __init__(self, err) -> None:
-        super().__init__(False, err)
+    def __init__(self, err=None) -> None:
+        super().__init__(False, None, err)

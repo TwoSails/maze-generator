@@ -1,2 +1,2 @@
 from .response import Response, Ok, Err
-from .exceptions import TileNameNotSet, TileDoesNotExist
+from .exceptions import TileNameNotSet, TileDoesNotExist, InvalidEdgeLabel, InvalidResolution

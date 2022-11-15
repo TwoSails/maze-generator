@@ -2,11 +2,22 @@
 class TileNameNotSet(Exception):
     pass
 
+
 class TileDoesNotExist(Exception):
     pass
+
 
 class TileSetDoesNotExist(Exception):
     pass
 
+
 class InvalidResolution(Exception):
+    pass
+
+
+class InvalidEdgeLabel(Exception):
+    pass
+
+
+class TileNotLoaded(Exception):
     pass
