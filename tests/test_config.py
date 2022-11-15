@@ -6,7 +6,7 @@ from mazeGenerator.config import Config
 class TestConfig(unittest.TestCase):
     def test_load_file(self):
         """
-        Tests that the config file is loaded
+        (1) Tests that the config file is loaded
         """
 
         config: Config = Config()
@@ -14,7 +14,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_valid_attribute(self):
         """
-        Tests that attributes can be fetched from config file
+        (2) Tests that attributes can be fetched from config file
         :return:
         """
 
@@ -23,7 +23,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_invalid_attribute(self):
         """
-        Tests that no fatal error occurs when fetching invalid attribute from config file
+        (3) Tests that no fatal error occurs when fetching invalid attribute from config file
         :return:
         """
         config: Config = Config()
@@ -31,7 +31,7 @@ class TestConfig(unittest.TestCase):
 
     def test_get_int_attribute(self):
         """
-        Tests that no fatal error occurs when fetching integer attribute from config file
+        (4) Tests that no fatal error occurs when fetching integer attribute from config file
         :return:
         """
         config: Config = Config()
@@ -39,7 +39,7 @@ class TestConfig(unittest.TestCase):
 
     def test_set_valid_attribute(self):
         """
-        Tests that value can be set and saved
+        (5) Tests that value can be set and saved
         :return:
         """
         config: Config = Config()
@@ -50,7 +50,7 @@ class TestConfig(unittest.TestCase):
 
     def test_set_invalid_attribute(self):
         """
-        Tests that no fatal error occurs when setting invalid attribute
+        (6) Tests that no fatal error occurs when setting invalid attribute
         :return:
         """
         config: Config = Config()
@@ -61,7 +61,7 @@ class TestConfig(unittest.TestCase):
 
     def test_set_valid_save_attribute(self):
         """
-        Tests that value can be set and saved in config file
+        (7) Tests that value can be set and saved in config file
         :return:
         """
         config: Config = Config()
@@ -72,7 +72,7 @@ class TestConfig(unittest.TestCase):
 
     def test_set_invalid_save_attribute(self):
         """
-        Tests that no fatal error occurs when setting invalid attribute and trying to save
+        (8) Tests that no fatal error occurs when setting invalid attribute and trying to save
         :return:
         """
         config: Config = Config()

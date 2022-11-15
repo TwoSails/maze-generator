@@ -55,3 +55,10 @@ class TestEdge(unittest.TestCase):
         """
         edge = Edge("a", "b", "c", "d")
         self.assertEqual(edge.negativeY(), "d")
+
+    def test_get_invalid(self):
+        """
+        7 - Fetch positive X after not set correctly
+        """
+        edge = Edge(False, False, False, False)
+        self.assertEqual(edge.positiveX(), "")
