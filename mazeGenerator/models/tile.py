@@ -13,20 +13,22 @@ from typing import List
 from mazeGenerator.config import Config
 from mazeGenerator.models.edge import Edge
 from mazeGenerator.models.transformations import Transformation
+from mazeGenerator.data import Rotation, Axis
 from mazeGenerator.response.response import Ok, Err, Response
-from mazeGenerator.response.exceptions import InvalidResolution, TileNameNotSet, TileDoesNotExist, TileSetDoesNotExist
+from mazeGenerator.response.exceptions import InvalidResolution, TileNameNotSet, TileDoesNotExist, \
+        TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded
 
 
 class Tile:
     def __init__(self) -> None:
         self.__config: Config = Config()
-        self.__transformations: List[Transformation] = []
+        self.__transformations: List[Rotation | Axis] = []  # List of available transformations
         self.__edges: List[Edge] = []
         self.__image = None
         self.__filePath: str = self.__setBasePath()
         self.__tileSetName: str = ""
         self.__name: str = ""
-        self.__resolution: int = 3
+        self.__resolution: int = 3  # Label resolution of edge labels
 
     def __setBasePath(self) -> str:
         """
@@ -105,8 +107,22 @@ class Tile:
     def loadImage(self):
         pass
 
-    def getEdge(self, direction: str):
+    def getEdge(self, direction: str) -> Response:
+        edges = ["pos-x", "pos-y", "neg-x", "neg-y"]
+        if direction.lower() not in edges:
+            return Err(InvalidEdgeLabel)
+
         pass
 
     def applyTransformations(self):
-        pass
+        if len(self.__edges) == 0:
+            return Err(TileNotLoaded)
+
+        transform = Transformation(self.__edges[0])
+        for transformation in self.__transformations:
+            if isinstance(transformation, Rotation):
+                self.__edges.append(transform.rotate(transformation))
+            elif isinstance(transformation, Axis):
+                self.__edges.append(transform.reflect(transformation))
+
+        return Ok(self.__edges)

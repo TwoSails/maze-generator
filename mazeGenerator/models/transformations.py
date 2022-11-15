@@ -1,9 +1,76 @@
 """
 File: transformations.py
-Date Created: 31/10/22
+Date Created: 10/11/22
 Description: Contains the transformations class which holds data and methods on how to transform an edge
 """
+# Python Modules
+from typing import List
+# Local Imports
+from mazeGenerator.data import Rotation, Axis
+from mazeGenerator.models import Edge
 
 
 class Transformation:
-    pass
+    def __init__(self, edge: Edge):
+        self.__edge = edge
+
+    def rotate(self, angle: Rotation):
+        """
+        Method which rotates the edge labels of the edge attribute
+        :param angle: Transformation angle
+        :return: Transformed edge labels
+        """
+        edge = Edge()
+        match angle:
+            case Rotation.one:  # Rotate 90 degrees clockwise
+                edge.xAxis = self.__edge.yAxis.reverse()
+                edge.yAxis = self.__edge.xAxis
+
+            case Rotation.two:  # Rotate 180 degrees clockwise
+                edge.xAxis = self.__edge.xAxis.reverse()
+                edge.yAxis = self.__edge.yAxis.reverse()
+
+            case Rotation.three:  # Rotate 270 degrees clockwise
+                edge.xAxis = self.__edge.yAxis
+                edge.yAxis = self.__edge.xAxis.reverse()
+
+            case _:
+                pass
+
+        edge.transformation = angle
+
+        return edge
+
+    def reflect(self, axis: Axis) -> Edge:
+        """
+        Method which reflects the edge labels along an axis
+        :param axis: transformation axis
+        :return: Edge
+        """
+        edge = Edge()
+        match axis:
+            case Axis.X:
+                edge.xAxis = self.__edge.xAxis
+                edge.yAxis = self.__edge.yAxis.reverse()
+
+            case Axis.Y:
+                edge.xAxis = self.__edge.xAxis.reverse()
+                edge.yAxis = self.__edge.yAxis
+
+        edge.transformation = axis
+
+        return edge
+
+    def transform(self) -> List[Edge]:
+        """
+        Method which applies all transformations on an edge object
+        :return: List of edge objects with transformations applied
+        """
+        transformations = []
+        for angle in [Rotation.one, Rotation.two, Rotation.three]:
+            transformations.append(self.rotate(angle))
+
+        for axis in [Axis.X, Axis.Y]:
+            transformations.append(self.reflect(axis))
+
+        return transformations

@@ -3,6 +3,7 @@ File: edge.py
 Date Created: 31/10/22
 Description: Contains the Edge class which holds the labels to annotate the edges of a tile
 """
+from mazeGenerator.data import Rotation, Axis
 
 
 class Edge:
@@ -10,7 +11,8 @@ class Edge:
                  *args,
                  x: list[str] | None = None,
                  y: list[str] | None = None,
-                 pX="", pY="", nX="", nY=""):
+                 pX="", pY="", nX="", nY="",
+                 transformation: Rotation | Axis = None):
         """
         Constructor method with options on how to load the data
         :param x: List of x-axis edge labels
@@ -19,55 +21,63 @@ class Edge:
         :param pY:
         :param nX:
         :param nY:
+        :param transformation: the transformation applied to the edge
         """
-        self.__xAxis = [""] * 2
-        self.__yAxis = [""] * 2
+        self.xAxis = [""] * 2
+        self.yAxis = [""] * 2
 
-        if pX != self.__xAxis[1]:
-            self.__xAxis[1] = pX
-        if pY != self.__yAxis[1]:
-            self.__yAxis[1] = pY
-        if nX != self.__yAxis[0]:
-            self.__xAxis[0] = nX
-        if nY != self.__yAxis[0]:
-            self.__yAxis[0] = nY
+        # This is important to understand how the tile got here
+        self.transformation = transformation
+
+        if pX != self.xAxis[1]:
+            self.xAxis[1] = pX
+        if pY != self.yAxis[1]:
+            self.yAxis[1] = pY
+        if nX != self.yAxis[0]:
+            self.xAxis[0] = nX
+        if nY != self.yAxis[0]:
+            self.yAxis[0] = nY
 
         if x is not None:
-            self.__xAxis = x
+            self.xAxis = x
         if y is not None:
-            self.__yAxis = y
+            self.yAxis = y
         if len(args) == 4:
-            self.__yAxis = [args[3], args[1]]
-            self.__xAxis = [args[2], args[0]]
+            self.yAxis = [args[3], args[1]]
+            self.xAxis = [args[2], args[0]]
 
-        for i, x in enumerate(self.__xAxis):
+        for i, x in enumerate(self.xAxis):
             if not isinstance(x, str):
-                self.__xAxis[i] = ""
+                self.xAxis[i] = ""
 
-        for i, y in enumerate(self.__yAxis):
+        for i, y in enumerate(self.yAxis):
             if not isinstance(y, str):
-                self.__yAxis[i] = ""
+                self.yAxis[i] = ""
 
     def positiveX(self):
         """
+        Getter Method
         :return: Positive X Axis edge label
         """
-        return self.__xAxis[1]
+        return self.xAxis[1]
 
     def negativeX(self):
         """
+        Getter Method
         :return: Negative X Axis edge label
         """
-        return self.__xAxis[0]
+        return self.xAxis[0]
 
     def positiveY(self):
         """
+        Getter Method
         :return: Positive Y Axis edge label
         """
-        return self.__yAxis[1]
+        return self.yAxis[1]
 
     def negativeY(self):
         """
+        Getter Method
         :return: Negative Y Axis edge label
         """
-        return self.__yAxis[0]
+        return self.yAxis[0]
