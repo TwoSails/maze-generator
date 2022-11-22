@@ -6,6 +6,7 @@ default program parameters such as the path which the tiles are located
 """
 
 import json
+from json import JSONDecodeError
 
 
 class Config:
@@ -28,10 +29,16 @@ class Config:
                     setattr(self, key, content[key])
                     self.__configValues.append(key)
                 self.loadedConfig = True
-        except FileNotFoundError:
+        except FileNotFoundError or JSONDecodeError:
             pass
 
     def saveConfig(self):
+        """
+        Saves all attributes from this class which are in the __configValues attribute
+        to the config file.
+        This method will overwrite all data in the config.json file
+        :return:
+        """
         config = {}
         for key in self.__configValues:
             config[key] = getattr(self, key)

@@ -1,3 +1,6 @@
 {
-    "dataPath": "data/"
+    "dataPath": "data/",
+    "alpha": "beta",
+    "maxWidth": 100,
+    "maxHeight": 100
 }
