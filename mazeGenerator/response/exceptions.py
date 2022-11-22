@@ -21,3 +21,19 @@ class InvalidEdgeLabel(Exception):
 
 class TileNotLoaded(Exception):
     pass
+
+
+class TileNotActive(Exception):
+    pass
+
+
+class ExceedsBounds(Exception):
+    pass
+
+
+class EmptyBoard(Exception):
+    pass
+
+
+class InvalidState(Exception):
+    pass

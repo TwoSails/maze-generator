@@ -5,9 +5,11 @@ Description: This is the Tile class which handles the single tile with compositi
 """
 # Python Modules
 import os
+import json
 from typing import List
 
 # External Modules
+from PIL import Image
 
 # Local Modules
 from mazeGenerator.config import Config
@@ -16,7 +18,7 @@ from mazeGenerator.models.transformations import Transformation
 from mazeGenerator.data import Rotation, Axis
 from mazeGenerator.response.response import Ok, Err, Response
 from mazeGenerator.response.exceptions import InvalidResolution, TileNameNotSet, TileDoesNotExist, \
-        TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded
+        TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded, TileNotActive
 
 
 class Tile:
@@ -49,7 +51,7 @@ class Tile:
         """
         if self.__tileSetName == "":
             return Err(TileNameNotSet)
-        if name not in os.listdir(self.makeFilePath()):
+        if f"{name}.png" not in os.listdir(self.makeFilePath()):
             return Err(TileDoesNotExist)
         self.__name = name
         return Ok(name)
@@ -97,22 +99,69 @@ class Tile:
     def getResolution(self) -> int:
         return self.__resolution
 
-    def makeFilePath(self, name: str = "", tileSet: str = "") -> str:
+    def makeFilePath(self, name: str | None = "", tileSet: str = "") -> str:
         if tileSet == "":
             tileSet = self.__tileSetName
         if name == "":
             name = self.__name
+        elif name is None:
+            name = ""
         return f"{self.__filePath}{tileSet}{f'/{name}' if name != '' else ''}"
 
-    def loadImage(self):
-        pass
+    def loadImage(self) -> Response:
+        with open(self.makeFilePath(name=None), "r") as tileConfigFile:
+            tileConfig = json.load(tileConfigFile)
 
-    def getEdge(self, direction: str) -> Response:
+        if self.__name == "":
+            return Err(TileNameNotSet)
+
+        tileParams = {}
+
+        for tile in tileConfig["tiles"]:
+            if tile["name"] == self.__name:
+                tileParams = {}
+
+        if tileParams == {}:
+            return Err(TileDoesNotExist)
+
+        if not tileParams["active"]:
+            return Err(TileNotActive)
+
+        self.__image = Image.open(self.makeFilePath())
+
+        tileEdges = tileParams["edges"]
+
+        self.__edges = Edge(pX=tileEdges["pos-x"],
+                            pY=tileEdges["pos-y"],
+                            nX=tileEdges["neg-x"],
+                            nY=tileEdges["neg-y"])
+
+        return Ok(self.__edges)
+
+    def getEdge(self, direction: str, transformation: Transformation) -> Response:
+        # TODO: Fully implement this please - done my good friend :thumbs_up:
         edges = ["pos-x", "pos-y", "neg-x", "neg-y"]
         if direction.lower() not in edges:
             return Err(InvalidEdgeLabel)
 
-        pass
+        edgeTransformed = None
+
+        for edge in self.__edges:
+            if edge.transformation == transformation:
+                edgeTransformed = edge
+
+        if direction == "pos-x":
+            label = edgeTransformed.positiveX()
+        elif direction == "pos-y":
+            label = edgeTransformed.positiveY()
+        elif direction == "neg-x":
+            label = edgeTransformed.negativeX()
+        elif direction == "neg-y":
+            label = edgeTransformed.negativeY()
+        else:
+            return Err(InvalidEdgeLabel)
+
+        return Ok(label)
 
     def applyTransformations(self):
         if len(self.__edges) == 0:
