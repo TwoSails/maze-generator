@@ -6,3 +6,4 @@ Description: This makes this directory a module for referencing
 from .edge import Edge
 from .transformations import Transformation
 from .tile import Tile
+from .cell import Cell
