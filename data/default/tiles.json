@@ -1,0 +1,72 @@
+{
+  "tiles": [
+    {
+      "fileName": "01.png",
+      "name": "01",
+      "edges": {
+        "pos-x": "000",
+        "neg-x": "000",
+        "pos-y": "000",
+        "neg-y": "000"
+      },
+      "active": true
+    },
+    {
+      "fileName": "02.png",
+      "name": "02",
+      "edges": {
+        "pos-x": "111",
+        "neg-x": "111",
+        "pos-y": "111",
+        "neg-y": "111"
+      },
+      "active": true
+    },
+    {
+      "fileName": "03.png",
+      "name": "03",
+      "edges": {
+        "pos-x": "101",
+        "neg-x": "000",
+        "pos-y": "011",
+        "neg-y": "110"
+      },
+      "active": false
+    },
+    {
+      "fileName": "04.png",
+      "name": "04",
+      "edges": {
+        "pos-x": "101",
+        "neg-x": "101",
+        "pos-y": "111",
+        "neg-y": "111"
+      },
+      "active": true
+    },
+    {
+      "fileName": "05.png",
+      "name": "05",
+      "edges": {
+        "pos-x": "111",
+        "neg-x": "101",
+        "pos-y": "101",
+        "neg-y": "101"
+      },
+      "active": true
+    },
+    {
+      "fileName": "06.png",
+      "name": "06",
+      "edges": {
+        "pos-x": "101",
+        "neg-x": "101",
+        "pos-y": "101",
+        "neg-y": "101"
+      },
+      "active": true
+    }
+  ],
+  "resolution": 3,
+  "imgResolution": 3
+}
