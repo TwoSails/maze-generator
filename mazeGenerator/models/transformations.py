@@ -23,16 +23,16 @@ class Transformation:
         edge = Edge()
         match angle:
             case Rotation.one:  # Rotate 90 degrees clockwise
-                edge.xAxis = self.__edge.yAxis.reverse()
-                edge.yAxis = self.__edge.xAxis
+                edge.xAxis = self.__edge.yAxis
+                edge.yAxis = list(reversed(self.__edge.xAxis))
 
             case Rotation.two:  # Rotate 180 degrees clockwise
-                edge.xAxis = self.__edge.xAxis.reverse()
-                edge.yAxis = self.__edge.yAxis.reverse()
+                edge.xAxis = list(reversed(self.__edge.xAxis))
+                edge.yAxis = list(reversed(self.__edge.yAxis))
 
             case Rotation.three:  # Rotate 270 degrees clockwise
-                edge.xAxis = self.__edge.yAxis
-                edge.yAxis = self.__edge.xAxis.reverse()
+                edge.xAxis = list(reversed(self.__edge.yAxis))
+                edge.yAxis = self.__edge.xAxis
 
             case _:
                 pass

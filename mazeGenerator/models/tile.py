@@ -175,6 +175,11 @@ class Tile:
 
         return Ok(label)
 
+    def getEdgeLabels(self, transformation):
+        for edge in self.__edges:
+            if edge.transformation == transformation:
+                return edge
+
     def applyTransformations(self):
         if len(self.__edges) == 0:
             return Err(TileNotLoaded)

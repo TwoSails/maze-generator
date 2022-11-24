@@ -64,7 +64,7 @@
         "pos-y": "011",
         "neg-y": "110"
       },
-      "active": false
+      "active": true
     }
   ],
   "resolution": 3,
