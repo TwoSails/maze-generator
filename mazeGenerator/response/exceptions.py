@@ -37,3 +37,7 @@ class EmptyBoard(Exception):
 
 class InvalidState(Exception):
     pass
+
+
+class TileSetNameNotSet(Exception):
+    pass

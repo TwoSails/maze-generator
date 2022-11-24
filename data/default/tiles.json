@@ -27,11 +27,11 @@
       "name": "03",
       "edges": {
         "pos-x": "101",
-        "neg-x": "000",
-        "pos-y": "011",
-        "neg-y": "110"
+        "neg-x": "101",
+        "pos-y": "101",
+        "neg-y": "101"
       },
-      "active": false
+      "active": true
     },
     {
       "fileName": "04.png",
@@ -60,11 +60,11 @@
       "name": "06",
       "edges": {
         "pos-x": "101",
-        "neg-x": "101",
-        "pos-y": "101",
-        "neg-y": "101"
+        "neg-x": "000",
+        "pos-y": "011",
+        "neg-y": "110"
       },
-      "active": true
+      "active": false
     }
   ],
   "resolution": 3,

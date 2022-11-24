@@ -18,7 +18,7 @@ from mazeGenerator.models.transformations import Transformation
 from mazeGenerator.data import Rotation, Axis
 from mazeGenerator.response.response import Ok, Err, Response
 from mazeGenerator.response.exceptions import InvalidResolution, TileNameNotSet, TileDoesNotExist, \
-        TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded, TileNotActive
+        TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded, TileNotActive, TileSetNameNotSet
 
 
 class Tile:
@@ -49,6 +49,8 @@ class Tile:
         :param name: Tile name
         :return: Response
         """
+        name = name.rjust(2, "0")
+
         if self.__tileSetName == "":
             return Err(TileNameNotSet)
         if f"{name}.png" not in os.listdir(self.makeFilePath()):
@@ -102,6 +104,8 @@ class Tile:
     def makeFilePath(self, name: str | None = "", tileSet: str = "") -> str:
         if tileSet == "":
             tileSet = self.__tileSetName
+            if tileSet == "":
+                return ""
         if name == "":
             name = self.__name
         elif name is None:
@@ -109,7 +113,10 @@ class Tile:
         return f"{self.__filePath}{tileSet}{f'/{name}' if name != '' else ''}"
 
     def loadImage(self) -> Response:
-        with open(self.makeFilePath(name=None), "r") as tileConfigFile:
+        if self.__tileSetName == "":
+            return Err(TileSetNameNotSet)
+
+        with open(self.makeFilePath(name="tiles.json"), "r") as tileConfigFile:
             tileConfig = json.load(tileConfigFile)
 
         if self.__name == "":
@@ -119,7 +126,7 @@ class Tile:
 
         for tile in tileConfig["tiles"]:
             if tile["name"] == self.__name:
-                tileParams = {}
+                tileParams = tile
 
         if tileParams == {}:
             return Err(TileDoesNotExist)
@@ -127,19 +134,24 @@ class Tile:
         if not tileParams["active"]:
             return Err(TileNotActive)
 
-        self.__image = Image.open(self.makeFilePath())
+        self.__image: Image = Image.open(self.makeFilePath(name=tileParams["fileName"]))
+        self.__image.load()
 
         tileEdges = tileParams["edges"]
 
-        self.__edges = Edge(pX=tileEdges["pos-x"],
+        self.__edges.append(Edge(pX=tileEdges["pos-x"],
                             pY=tileEdges["pos-y"],
                             nX=tileEdges["neg-x"],
-                            nY=tileEdges["neg-y"])
+                            nY=tileEdges["neg-y"]))
+
+        self.__resolution = tileConfig["resolution"]
 
         return Ok(self.__edges)
 
-    def getEdge(self, direction: str, transformation: Transformation) -> Response:
+    def getEdge(self, direction: str, transformation: Transformation | None) -> Response:
         # TODO: Fully implement this please - done my good friend :thumbs_up:
+        if len(self.__edges) == 0:
+            return Err(TileNotLoaded)
         edges = ["pos-x", "pos-y", "neg-x", "neg-y"]
         if direction.lower() not in edges:
             return Err(InvalidEdgeLabel)
@@ -175,3 +187,6 @@ class Tile:
                 self.__edges.append(transform.reflect(transformation))
 
         return Ok(self.__edges)
+
+    def tidy(self):
+        pass
