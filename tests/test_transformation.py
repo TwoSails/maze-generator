@@ -55,7 +55,7 @@ class TestTransformation(unittest.TestCase):
             msg=f"{rotation.xAxis=}, {rotation.yAxis=}"
         )
 
-    def reflect_x(self):
+    def test_reflect_x(self):
         """
         4 - Reflects edge labels along the x-axis
         """
@@ -64,11 +64,11 @@ class TestTransformation(unittest.TestCase):
         reflect = transformation.reflect(Axis.X)
 
         self.assertTrue(
-            (reflect.xAxis == [labels["b"], labels["d"]]) and (reflect.yAxis == [labels["c"], labels["a"]]),
+            (reflect.xAxis == [labels["d"], labels["b"]]) and (reflect.yAxis == [labels["a"], labels["c"]]),
             msg=f"{reflect.xAxis=}, {reflect.yAxis=}"
         )
 
-    def reflect_y(self):
+    def test_reflect_y(self):
         """
         5 - Reflects edge labels along the y-axis
         """
@@ -77,9 +77,29 @@ class TestTransformation(unittest.TestCase):
         reflect = transformation.reflect(Axis.Y)
 
         self.assertTrue(
-            (reflect.xAxis == [labels["d"], labels["b"]]) and (reflect.yAxis == [labels["a"], labels["c"]]),
+            (reflect.xAxis == [labels["b"], labels["d"]]) and (reflect.yAxis == [labels["c"], labels["a"]]),
             msg=f"{reflect.xAxis=}, {reflect.yAxis=}"
         )
+
+    def test_rotate_invalid(self):
+        """
+        6 - Invalid rotation argument
+        """
+        tile, labels = self.setup_tile()
+        transformation = Transformation(tile.getEdgeLabels(None))
+        rotate = transformation.rotate("one")
+
+        self.assertFalse(rotate.loaded)
+
+    def test_reflect_invalid(self):
+        """
+        7 - Invalid reflection argument
+        """
+        tile, labels = self.setup_tile()
+        transformation = Transformation(tile.getEdgeLabels(None))
+        rotate = transformation.reflect("x")
+
+        self.assertFalse(rotate.loaded)
 
 
 if __name__ == '__main__':

@@ -51,10 +51,10 @@ class Transformation:
         match axis:
             case Axis.X:
                 edge.xAxis = self.__edge.xAxis
-                edge.yAxis = self.__edge.yAxis.reverse()
+                edge.yAxis = list(reversed(self.__edge.yAxis))
 
             case Axis.Y:
-                edge.xAxis = self.__edge.xAxis.reverse()
+                edge.xAxis = list(reversed(self.__edge.xAxis))
                 edge.yAxis = self.__edge.yAxis
 
         edge.transformation = axis
