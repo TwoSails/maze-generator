@@ -17,10 +17,10 @@ class Edge:
         Constructor method with options on how to load the data
         :param x: List of x-axis edge labels
         :param y: List of y-axis edge labels
-        :param pX:
-        :param pY:
-        :param nX:
-        :param nY:
+        :param pX: Positive X Label
+        :param pY: Positive Y Label
+        :param nX: Negative X Label
+        :param nY: Negative Y Label
         :param transformation: the transformation applied to the edge
         """
         self.xAxis = [""] * 2
@@ -54,6 +54,17 @@ class Edge:
             if not isinstance(y, str):
                 self.yAxis[i] = ""
 
+    @property
+    def loaded(self) -> bool:
+        """
+        Checks whether edge labels have been loaded into object
+        :return:
+        """
+        if self.xAxis == ["", ""] or self.yAxis == ["", ""]:
+            return False
+
+        return True
+
     def positiveX(self):
         """
         Getter Method
@@ -81,3 +92,6 @@ class Edge:
         :return: Negative Y Axis edge label
         """
         return self.yAxis[0]
+
+    def __repr__(self):
+        return f"Edge<{self.yAxis=}, {self.xAxis=}>"

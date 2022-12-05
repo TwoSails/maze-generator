@@ -34,7 +34,7 @@ class Board:
             return Err(TypeError)
 
         if heightInput > self.__config.get("maxHeight"):
-            return Err(ExceedsBounds)   
+            return Err(ExceedsBounds)
 
         self.height = heightInput
         return Ok(self.height)
@@ -72,7 +72,11 @@ class Board:
             return Err(EmptyBoard)
         lowestEntropy = self.board[0]
         for cell in self.board:
-            if cell.entropy < lowestEntropy.entropy:
+            if ((cell.entropy < lowestEntropy.entropy and not cell.collapsed)
+                    or (not cell.collapsed and lowestEntropy.collapsed)):
+                # This was the line of code which posed the most issues due to it overwriting lowest cell with collapsed
+                # cells and hence creating an infinite loop
+                # defining condition being "and not cell.collapsed"
                 lowestEntropy = cell
 
         return Ok(lowestEntropy)
@@ -111,6 +115,7 @@ class Board:
             if cell.collapsed:
                 neighbours: List[Cell] = list(filter(lambda c: not c.collapsed, self.getNeighbours(cell.row, cell.col)))
                 if len(neighbours) == 0:
+                    idx += 1
                     continue
 
                 for neighbour_cell in neighbours:
@@ -138,7 +143,6 @@ class Board:
             if not self.board[idx].collapsed:
                 complete = False
             idx += 1
-        print(complete, self.board)
         return complete
 
     def stateInvalid(self) -> bool:
@@ -146,6 +150,7 @@ class Board:
         idx = 0
         while idx < len(self.board) and not invalid:
             if self.board[idx].entropy == 0 and not self.board[idx].collapsed:
+                print("please why", self.board[idx])
                 invalid = True
 
             idx += 1

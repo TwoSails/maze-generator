@@ -32,6 +32,9 @@ class Tile:
         self.__name: str = ""
         self.__resolution: int = 3  # Label resolution of edge labels
 
+    def __repr__(self):
+        return f"Tile<{self.__name}>"
+
     def __setBasePath(self) -> str:
         """
         Fixes config path
@@ -42,6 +45,11 @@ class Tile:
             dataPath = f"{dataPath}/"
 
         return dataPath
+
+    def getTransformation(self) -> Transformation | None:
+        if len(self.__edges) == 0:
+            return None
+        return self.__edges[0].transformation
 
     def setName(self, name: str) -> Response:
         """
@@ -146,9 +154,15 @@ class Tile:
 
         self.__resolution = tileConfig["resolution"]
 
+        for transformation in tileParams["transformations"]:
+            if transformation == "rotate":
+                self.__transformations.extend([Rotation.one, Rotation.two, Rotation.three])
+            elif transformation == "reflect":
+                self.__transformations.extend([Axis.X, Axis.Y])
+
         return Ok(self.__edges)
 
-    def getEdge(self, direction: str, transformation: Transformation | None) -> Response:
+    def getEdge(self, direction: str, transformation: Transformation | None = None) -> Response:
         # TODO: Fully implement this please - done my good friend :thumbs_up:
         if len(self.__edges) == 0:
             return Err(TileNotLoaded)
@@ -161,6 +175,9 @@ class Tile:
         for edge in self.__edges:
             if edge.transformation == transformation:
                 edgeTransformed = edge
+
+        if transformation is None and len(self.__edges) == 1:
+            edgeTransformed = self.__edges[0]
 
         if direction == "pos-x":
             label = edgeTransformed.positiveX()
@@ -193,5 +210,14 @@ class Tile:
 
         return Ok(self.__edges)
 
-    def tidy(self):
-        pass
+    def inherit(self, obj, edge):
+        self.__edges = [edge]
+        self.__tileSetName = obj.getTileSet()
+        self.__name = obj.getName()
+
+    def expand(self) -> list:
+        tiles = []
+        for edge in self.__edges:
+            tiles.append(Tile())
+            tiles[-1].inherit(self, edge)
+        return tiles

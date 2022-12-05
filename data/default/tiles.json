@@ -9,7 +9,7 @@
         "pos-y": "000",
         "neg-y": "000"
       },
-      "transformations": ["rotate", "reflect"],
+      "transformations": [],
       "active": true
     },
     {
@@ -21,7 +21,7 @@
         "pos-y": "111",
         "neg-y": "111"
       },
-      "transformations": ["rotate", "reflect"],
+      "transformations": [],
       "active": true
     },
     {
@@ -33,7 +33,7 @@
         "pos-y": "101",
         "neg-y": "101"
       },
-      "transformations": ["rotate", "reflect"],
+      "transformations": [],
       "active": true
     },
     {

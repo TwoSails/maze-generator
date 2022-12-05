@@ -3,7 +3,7 @@ File: MazeGenerator.py
 Created: 22/11/22
 """
 from mazeGenerator.controllers.board import Board
-from mazeGenerator.models import Tile, Transformation
+from mazeGenerator.models import Tile
 from mazeGenerator.config import Config
 from mazeGenerator.response import Response, Ok, Err
 from mazeGenerator.response import TileSetDoesNotExist

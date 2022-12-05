@@ -8,7 +8,10 @@ class Response:
         self.error = error
 
     def __repr__(self):
-        return f"Response<{self.success=}, {self.data=}, {self.error=}>"
+        if self.success:
+            return f"Ok<{self.data}>"
+        return f"Err<{self.error}>"
+        # return f"Response<{self.success=}, {self.data=}, {self.error=}>"
 
 
 class Ok(Response):

@@ -13,10 +13,19 @@ class Cell:
         self.collapsed: bool = False
         self.__entropy: int = int(1e9)
         self.availableTiles: List[Tile] = tileSet
-        self.transformation: Transformation = None
-        self.tile: Tile = None
+        self.__transformation: Transformation | None = None
+        self.tile: Tile | None = None
         self.row: int = row
         self.col: int = col
+
+    def __repr__(self):
+        return f"Cell<{self.collapsed=}, {self.entropy=}, {self.tile=}, {self.transformation=} {self.row}-{self.col}>"
+
+    @property
+    def transformation(self):
+        if self.tile is None:
+            return None
+        return self.tile.getTransformation()
 
     @property
     def entropy(self) -> int:
@@ -42,8 +51,10 @@ class Cell:
             return Err(InvalidState)
 
         self.tile = choice(self.availableTiles)
+        self.collapsed = True
+        self.availableTiles = [self.tile]  # This overwrites the calculation for entropy so sets cell entropy to 1
 
         return Ok(self.tile)
 
     def reduce(self, edge_label, direction):
-        self.availableTiles = list(filter(lambda tile: tile.getEdge(direction) == edge_label, self.availableTiles))
+        self.availableTiles = list(filter(lambda tile: tile.getEdge(direction).data == edge_label, self.availableTiles))
