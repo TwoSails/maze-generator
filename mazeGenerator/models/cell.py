@@ -40,6 +40,9 @@ class Cell:
         return self.tile
 
     def getEdge(self, direction: str) -> str:
+        if self.tile is None:
+            return ""
+
         edge = self.tile.getEdge(direction, self.transformation)
         if edge.success:
             return edge.data

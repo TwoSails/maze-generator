@@ -1,0 +1,1 @@
+from .mazeGenerator import App

@@ -6,7 +6,7 @@ from mazeGenerator.controllers.board import Board
 from mazeGenerator.models import Tile
 from mazeGenerator.config import Config
 from mazeGenerator.response import Response, Ok, Err
-from mazeGenerator.response import TileSetDoesNotExist
+from mazeGenerator.response import TileSetDoesNotExist, InvalidState
 
 from typing import List
 import json
@@ -19,7 +19,13 @@ class App:
         self.config = Config()
         self.tileSet: List[Tile] = []
 
-    def loadTileSet(self, tileSet) -> Response:
+    def loadTileSet(self, tileSet, transform: bool = True) -> Response:
+        """
+        Loads all tiles into the algorithm
+        :param tileSet: Name of the tile set
+        :param transform: Automatically apply the transformations to all tiles
+        :return: Success
+        """
         if tileSet not in os.listdir(self.config.get("dataPath")):
             return Err(TileSetDoesNotExist)
 
@@ -40,9 +46,16 @@ class App:
             if not res.success:
                 return res
 
+        if transform:
+            self.transformTileSet()
+
         return Ok()
 
     def transformTileSet(self):
+        """
+        Applies transformations to the tiles loaded
+        :return:
+        """
         expansion = []
         for tile in self.tileSet:
             tile.applyTransformations()
@@ -50,6 +63,12 @@ class App:
         self.tileSet.extend(expansion)
 
     def setupBoard(self, height, width):
+        """
+        Configures the dimensions to create the board and adds the tile set to the algorithm
+        :param height:
+        :param width:
+        :return:
+        """
         if len(self.tileSet) == 0:
             return Err(TileSetDoesNotExist)
         self.board.setHeight(height)
@@ -57,6 +76,13 @@ class App:
         self.board.tileSet = self.tileSet
         self.board.generateBoard()
 
-    def run(self):
+    def run(self) -> Response:
+        """
+        Performs collapse
+        :return: Cell Board | InvalidState
+        """
         self.board.performCollapse()
-        print("eh")
+        if self.board.collapsed:
+            return Ok(self.board.board)
+
+        return Err(InvalidState if self.board.stateInvalid() else None)
