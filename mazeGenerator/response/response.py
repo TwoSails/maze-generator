@@ -20,5 +20,5 @@ class Ok(Response):
 
 
 class Err(Response):
-    def __init__(self, err=None) -> None:
-        super().__init__(False, None, err)
+    def __init__(self, err=None, data=None) -> None:
+        super().__init__(False, data, err)

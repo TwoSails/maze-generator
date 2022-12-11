@@ -1,0 +1,192 @@
+"""
+File: imageHandler.py
+Created: 9/12/22
+Description: This is the controller for exporting mazes
+"""
+# Local Imports
+from mazeGenerator.models import Cell, Tile
+from mazeGenerator.data import Axis, Rotation
+from mazeGenerator.config import Config
+
+from mazeGenerator.response import Response, Ok, Err, ExceedsBounds
+
+# Python Imports
+from typing import List
+
+# External Packages
+from PIL import Image as ImageFuncs
+from PIL.Image import Image
+
+
+class ImageHandler:
+    def __init__(self, width: int = -1, height: int = -1, tileImageResolution: int = -1, tileResolution: int = -1,
+                 tileSet: List[Tile] = None, board: List[Cell] = None, tileSetName: str = "", name: str = ""):
+        """
+        :param width: Number of cells in the horizontal
+        :param height: Number of cells in the vertical
+        :param tileImageResolution: Pixel resolution of the tile image
+        :param tileResolution: Edge label resolution of the tiles
+        :param tileSet: List of tiles used in the board
+        :param board: List of cells
+        :param tileSetName: Name of the tile set used
+        :param name: Name of the image output
+        """
+        if tileSet is None:
+            tileSet = []
+        if board is None:
+            board = []
+        self.config: Config = Config()
+        self.tileSet: List[Tile] = tileSet
+        self.tileSetName: str = tileSetName
+        self.tileLog: dict = {}
+        self.board: List[Cell] = board
+        self.width: int = width
+        self.height: int = height
+        self.tileImageResolution: int = tileImageResolution
+        self.name: str = name
+        self.tileResolution: int = tileResolution
+        self.maze: Image | None = None
+
+    @staticmethod
+    def ValidateMultiTypeInputToInteger(validate, bound: int = 0) -> Response:
+        if isinstance(validate, str):
+            try:
+                validate = int(validate)
+            except ValueError:
+                return Err(TypeError)
+
+        validate = abs(validate)
+        if validate <= bound:
+            return Err()
+
+        return Ok(validate)
+
+    def SetTiles(self, tiles: List[Tile]) -> Response:
+        for tile in tiles:
+            if not isinstance(tile, Tile):
+                return Err(TypeError)
+        self.tileSet = tiles
+
+        for tile in self.tileSet:
+            if tile.getImage() is None:
+                tile.loadImage()
+            tileName = tile.getName()
+            self.tileLog[tileName] = {
+                "base": tile.getImage()
+            }
+            for transformation in [Rotation.one, Rotation.two, Rotation.three, Axis.X, Axis.Y]:
+                self.tileLog[tileName][transformation] = self.TransformTileImage(transformation, tile)
+
+        return Ok()
+
+    def SetWidth(self, width: int) -> Response:
+        validate = self.ValidateMultiTypeInputToInteger(width)
+        if validate.success:
+            self.width = validate.data
+
+        return validate
+
+    def SetHeight(self, height: int) -> Response:
+        validate = self.ValidateMultiTypeInputToInteger(height)
+        if validate.success:
+            self.height = validate.data
+
+        return validate
+
+    def SetTileImageResolution(self, res: int) -> Response:
+        validate = self.ValidateMultiTypeInputToInteger(res)
+        if validate.success:
+            self.tileImageResolution = validate.data
+
+        return validate
+
+    def GetIdx(self, row: int, col: int) -> Response:
+        if row > self.height or col > self.width:
+            return Err(ExceedsBounds)
+
+        return Ok(row * self.width + col)
+
+    def GenerateBlankImage(self):
+        self.maze = ImageFuncs.new("RGBA",
+                                   (self.width * self.tileImageResolution, self.height * self.tileImageResolution))
+
+    def PlaceCell(self, row: int, col: int) -> Response:
+        cornerCoords = (col * self.tileImageResolution, row * self.tileImageResolution)
+        idx = self.GetIdx(row, col)
+        if not idx.success:
+            return idx
+
+        if idx.data >= len(self.board):
+            return Err(ExceedsBounds)
+
+        cell = self.board[idx.data]
+        if cell.collapsed:
+            img = self.tileLog[cell.tile.getName()][cell.transformation if cell.transformation is not None else "base"]
+        else:
+            img = ImageFuncs.new("RGBA", (self.tileImageResolution, self.tileImageResolution), color="#555555")
+            print(cell)
+        for xy, pixel in enumerate(list(img.getdata())):
+            rel_x = xy % self.tileImageResolution
+            rel_y = xy // self.tileImageResolution
+            self.maze.putpixel((cornerCoords[0] + rel_x, cornerCoords[1] + rel_y), pixel)
+
+        return Ok()
+
+    @staticmethod
+    def TransformTileImage(transformation: Axis | Rotation, image: Tile):
+        img = image.getImage()
+        if img is None:
+            image.loadImage()
+            img = image.getImage()
+        match transformation:
+            case Rotation.one:
+                img = img.transpose(ImageFuncs.Transpose.ROTATE_90)
+            case Rotation.two:
+                img = img.transpose(ImageFuncs.Transpose.ROTATE_180)
+            case Rotation.three:
+                img = img.transpose(ImageFuncs.Transpose.ROTATE_270)
+            case Axis.X:
+                img = img.transpose(ImageFuncs.Transpose.FLIP_TOP_BOTTOM)
+            case Axis.Y:
+                img = img.transpose(ImageFuncs.Transpose.FLIP_LEFT_RIGHT)
+            case _:
+                img = None
+
+        return img
+
+    def SaveImage(self):
+        outputDir = self.config.get("outputImgPath")
+        filePath = f"{outputDir}{self.name if self.name is not '' else self.tileSetName}.png"
+        try:
+            self.maze.save(filePath)
+        except ValueError:
+            return Err(ValueError)
+        except OSError:
+            return Err(OSError)
+
+        return Ok()
+
+    def GenerateImage(self):
+        self.GenerateBlankImage()
+        for cell in self.board:
+            self.PlaceCell(cell.row, cell.col)
+        # self.CalculateAverageColour()
+        self.SaveImage()
+
+    def CalculateAverageColour(self):
+        palettes = []
+        for tile in self.tileSet:
+            img = tile.getImage()
+            if img is None:
+                continue
+
+            AVG = [0, 0, 0]
+            pixels = img.getdata()
+            for pixel in pixels:
+                AVG[0] += pixel[0]
+                AVG[1] += pixel[1]
+                AVG[2] += pixel[2]
+
+            print(sum(AVG) / len(pixels))
+
+        print(f"{palettes=}")
