@@ -92,7 +92,7 @@ class TestImageHandler(unittest.TestCase):
         """
         11 - Get valid index
         """
-        img = ImageHandler()
+        img = ImageHandler(height=50, width=50)
         res = img.GetIdx(row=0, col=1)
         self.assertTrue(res.success and res.data == 1)
 
@@ -100,7 +100,7 @@ class TestImageHandler(unittest.TestCase):
         """
         12 - Get invalid index
         """
-        img = ImageHandler()
+        img = ImageHandler(height=50, width=50)
         res = img.GetIdx(row=-1, col=-1)
         self.assertFalse(res.success)
 
@@ -145,7 +145,7 @@ class TestImageHandler(unittest.TestCase):
         img.GenerateBlankImage()
         img.board = app.board.board
         res = img.PlaceCell(-1, -1)
-        self.assertTrue(res.success)
+        self.assertFalse(res.success)
 
     def test_transform_valid(self):
         """
@@ -195,7 +195,8 @@ class TestImageHandler(unittest.TestCase):
         21 - Generate Image without Configured settings
         """
         img = ImageHandler()
-        self.assertRaises(Exception, img.GenerateImage())
+        with self.assertRaises(AttributeError):
+            img.GenerateImage()
 
 
 if __name__ == '__main__':
