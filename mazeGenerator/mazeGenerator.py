@@ -85,4 +85,4 @@ class App:
         if self.board.collapsed:
             return Ok(self.board.board)
 
-        return Err(InvalidState if self.board.stateInvalid() else None)
+        return Err(InvalidState if self.board.stateInvalid() else None, data=self.board.board)

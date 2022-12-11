@@ -101,14 +101,18 @@ class ImageHandler:
         return validate
 
     def GetIdx(self, row: int, col: int) -> Response:
-        if row > self.height or col > self.width:
+        if row > self.height or col > self.width or row < 0 or col < 0:
             return Err(ExceedsBounds)
 
         return Ok(row * self.width + col)
 
-    def GenerateBlankImage(self):
+    def GenerateBlankImage(self) -> Response:
+        if self.width <= 0 or self.tileImageResolution <= 0 or self.height <= 0:
+            return Err(ExceedsBounds)
         self.maze = ImageFuncs.new("RGBA",
                                    (self.width * self.tileImageResolution, self.height * self.tileImageResolution))
+
+        return Ok()
 
     def PlaceCell(self, row: int, col: int) -> Response:
         cornerCoords = (col * self.tileImageResolution, row * self.tileImageResolution)
@@ -116,7 +120,7 @@ class ImageHandler:
         if not idx.success:
             return idx
 
-        if idx.data >= len(self.board):
+        if idx.data >= len(self.board) or idx.data < 0:
             return Err(ExceedsBounds)
 
         cell = self.board[idx.data]
@@ -124,7 +128,6 @@ class ImageHandler:
             img = self.tileLog[cell.tile.getName()][cell.transformation if cell.transformation is not None else "base"]
         else:
             img = ImageFuncs.new("RGBA", (self.tileImageResolution, self.tileImageResolution), color="#555555")
-            print(cell)
         for xy, pixel in enumerate(list(img.getdata())):
             rel_x = xy % self.tileImageResolution
             rel_y = xy // self.tileImageResolution
@@ -156,7 +159,7 @@ class ImageHandler:
 
     def SaveImage(self):
         outputDir = self.config.get("outputImgPath")
-        filePath = f"{outputDir}{self.name if self.name is not '' else self.tileSetName}.png"
+        filePath = f"{outputDir}{self.name if self.name != '' else self.tileSetName}.png"
         try:
             self.maze.save(filePath)
         except ValueError:

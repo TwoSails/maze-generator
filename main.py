@@ -6,6 +6,7 @@ This is required to be in the top level directory due to python file hierarchy a
 """
 
 from mazeGenerator.mazeGenerator import App
+from mazeGenerator.controllers import ImageHandler
 
 app = App()
 res = app.loadTileSet("default")
@@ -13,4 +14,10 @@ print(res.success)
 app.transformTileSet()
 app.setupBoard(5, 5)
 
-app.run()
+resApp = app.run()
+img = ImageHandler(width=app.board.width, height=app.board.height,
+                   tileImageResolution=3, tileResolution=3,
+                   board=resApp.data, tileSetName="default")
+img.SetTiles(app.tileSet)
+img.GenerateImage()
+

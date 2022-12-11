@@ -26,7 +26,7 @@ class Tile:
         self.__config: Config = Config()
         self.__transformations: List[Rotation | Axis] = []  # List of available transformations
         self.__edges: List[Edge] = []
-        self.__image = None
+        self.__image: Image.Image | None = None
         self.__filePath: str = self.__setBasePath()
         self.__tileSetName: str = ""
         self.__name: str = ""
@@ -87,6 +87,9 @@ class Tile:
     def getTileSet(self) -> str:
         return self.__tileSetName
 
+    def getImage(self) -> Image.Image:
+        return self.__image
+
     def setResolution(self, res: int) -> Response:
         """
         Setter method with validation for inputted resolution
@@ -142,7 +145,7 @@ class Tile:
         if not tileParams["active"]:
             return Err(TileNotActive)
 
-        self.__image: Image = Image.open(self.makeFilePath(name=tileParams["fileName"]))
+        self.__image: Image.Image = Image.open(self.makeFilePath(name=tileParams["fileName"]))
         self.__image.load()
 
         tileEdges = tileParams["edges"]

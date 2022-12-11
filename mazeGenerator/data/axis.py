@@ -7,5 +7,5 @@ from enum import Enum
 
 
 class Axis(Enum):
-    X = 0
-    Y = 1
+    X = 100
+    Y = 101
