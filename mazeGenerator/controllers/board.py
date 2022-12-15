@@ -57,7 +57,7 @@ class Board:
                 neighbour_row = (row + delta_row) % self.height
                 neighbour_col = (col + delta_col) % self.width
 
-                if abs(neighbour_row - row) != 1 or abs(neighbour_col - col):
+                if abs(neighbour_row - row) > 1 or abs(neighbour_col - col) > 1:
                     continue
 
                 idx = self.getIdx(neighbour_row, neighbour_col)

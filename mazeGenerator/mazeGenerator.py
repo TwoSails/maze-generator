@@ -33,6 +33,8 @@ class App:
             tileSetConfig = json.load(tileSetConfigFile)
 
         for tile in tileSetConfig["tiles"]:
+            if not tile["active"]:
+                continue
             self.tileSet.append(Tile())
             res = self.tileSet[-1].setTileSet(tileSet)
             if not res.success:
