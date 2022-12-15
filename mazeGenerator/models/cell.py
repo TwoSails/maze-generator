@@ -5,11 +5,13 @@ Date Created: 19/11/22
 from mazeGenerator.models import Tile, Transformation
 from mazeGenerator.response import Response, Ok, Err, InvalidState
 from typing import List
+import random
 from random import choice
 
 
 class Cell:
-    def __init__(self, tileSet: List[Tile], row: int = -1, col: int = -1):
+    def __init__(self, tileSet: List[Tile], row: int = -1, col: int = -1, seed: str | int = 0):
+        self.seed = seed
         self.collapsed: bool = False
         self.__entropy: int = int(1e9)
         self.availableTiles: List[Tile] = tileSet
@@ -20,6 +22,9 @@ class Cell:
 
     def __repr__(self):
         return f"Cell<{self.collapsed=}, {self.entropy=}, {self.tile=}, {self.transformation=} {self.row}-{self.col}>"
+
+    def setSeed(self):
+        random.seed(self.seed)
 
     @property
     def transformation(self):

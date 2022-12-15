@@ -2,6 +2,8 @@
 File: board.py
 Date Created: 19/11/22
 """
+import random
+
 from mazeGenerator.config import Config
 from mazeGenerator.models import Tile, Cell
 from mazeGenerator.response import Response, Ok, Err
@@ -18,6 +20,7 @@ class Board:
         self.tileSet: List[Tile] = []
         self.board: List[Cell] = []
         self.collapsed = False
+        self.seed = 0
 
     def setWidth(self, widthInput: int) -> Response:
         if not isinstance(widthInput, int):
@@ -39,6 +42,9 @@ class Board:
         self.height = heightInput
         return Ok(self.height)
 
+    def setSeed(self, seed: str | int):
+        self.seed = seed
+
     def getIdx(self, row: int, col: int) -> Response:
         if row > self.height or col > self.width or row < 0 or col < 0:
             return Err(ExceedsBounds)
@@ -48,28 +54,26 @@ class Board:
 
     def getNeighbours(self, row: int, col: int) -> List[Cell]:
         neighbours: List[Cell] = []
-        for delta_row in [-1, 0, 1]:
-            for delta_col in [-1, 0, 1]:
-                if (delta_row, delta_col) in [(-1, -1), (1, -1), (-1, 1), (1, 1), (0, 0)]:  # Remove corners and centre
-                    # There probably was a better way of doing this then force skipping half the generated parameters
-                    continue
+        for delta_row, delta_col in ((1, 0), (0, 1), (0, -1), (-1, 0)):
+            neighbour_row = (row + delta_row) % self.height
+            neighbour_col = (col + delta_col) % self.width
 
-                neighbour_row = (row + delta_row) % self.height
-                neighbour_col = (col + delta_col) % self.width
+            if abs(neighbour_row - row) > 1 or abs(neighbour_col - col) > 1:
+                continue
 
-                if abs(neighbour_row - row) > 1 or abs(neighbour_col - col) > 1:
-                    continue
-
-                idx = self.getIdx(neighbour_row, neighbour_col)
-                if idx.success:
-                    neighbours.append(self.board[idx.data])
+            idx = self.getIdx(neighbour_row, neighbour_col)
+            if idx.success:
+                neighbours.append(self.board[idx.data])
 
         return neighbours
 
     def generateBoard(self):
+        if self.seed == 0:
+            self.seed = "".join([str(random.randint(0, 10)) for _ in range(10)])
         for row in range(self.height):
             for col in range(self.width):
-                self.board.append(Cell(self.tileSet, row=row, col=col))
+                self.board.append(Cell(self.tileSet, row=row, col=col, seed=self.seed))
+                self.board[-1].setSeed()
 
     def findLowestEntropy(self) -> Response:
         if len(self.board) == 0:
@@ -108,6 +112,8 @@ class Board:
     def calculateEntropy(self):
         invalidState = False
         idx = 0
+        # for cell in filter(lambda c: c.collapsed, self.board):
+        #     pass
         while not invalidState and idx < len(self.board):
             cell = self.board[idx]
             if cell.collapsed:

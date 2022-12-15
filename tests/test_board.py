@@ -83,7 +83,7 @@ class TestBoard(unittest.TestCase):
         board.setHeight(50)
         board.setWidth(50)
         board.generateBoard()
-        neighbours = board.getNeighbours(0, 0)
+        neighbours = board.getNeighbours(20, 20)
         self.assertTrue(len(neighbours) == 4, msg=f"{neighbours}")
 
     def test_get_invalid_neighbours(self):
@@ -95,7 +95,7 @@ class TestBoard(unittest.TestCase):
         board.setWidth(50)
         board.generateBoard()
         neighbours = board.getNeighbours(100, 100)
-        self.assertTrue(len(neighbours) == 4, msg=f"{neighbours}")
+        self.assertTrue(len(neighbours) == 0, msg=f"{neighbours}")
 
     def test_find_default_lowest_entropy(self):
         """
