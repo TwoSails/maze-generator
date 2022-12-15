@@ -56,6 +56,10 @@ class Board:
 
                 neighbour_row = (row + delta_row) % self.height
                 neighbour_col = (col + delta_col) % self.width
+
+                if abs(neighbour_row - row) != 1 or abs(neighbour_col - col):
+                    continue
+
                 idx = self.getIdx(neighbour_row, neighbour_col)
                 if idx.success:
                     neighbours.append(self.board[idx.data])
@@ -83,7 +87,6 @@ class Board:
 
     def performCollapse(self):
         invalid = False
-        print("hiyaa?", self.board)
         while not invalid and not self.collapsed:
             invalid = self.calculateEntropy()
             if self.stateComplete():
@@ -91,14 +94,9 @@ class Board:
 
             lowestCell = self.findLowestEntropy()
             if lowestCell.success:
-                res = lowestCell.data.collapse()
+                lowestCell.data.collapse()
 
-        print(invalid, self.collapsed, self.board)
-        e = self.board[0].getEdge("pos-x")
-        print(e)
-        for tile in self.tileSet:
-            if tile.getEdge("neg-x") == e:
-                print(tile)
+        self.board[0].getEdge("pos-x")
 
     @staticmethod
     def reverse_direction(direction):
@@ -150,7 +148,6 @@ class Board:
         idx = 0
         while idx < len(self.board) and not invalid:
             if self.board[idx].entropy == 0 and not self.board[idx].collapsed:
-                print("please why", self.board[idx])
                 invalid = True
 
             idx += 1
