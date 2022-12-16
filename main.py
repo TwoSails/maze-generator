@@ -10,14 +10,17 @@ from mazeGenerator.controllers import ImageHandler
 
 app = App()
 res = app.loadTileSet("default")
-print(res.success)
 app.transformTileSet()
-app.setupBoard(5, 5)
+app.setupBoard(20, 20)
+seed = app.board.seed
+
+print(f"{seed=}")
 
 resApp = app.run()
 img = ImageHandler(width=app.board.width, height=app.board.height,
                    tileImageResolution=3, tileResolution=3,
-                   board=resApp.data, tileSetName="default")
+                   board=resApp.data, tileSetName="default", seed=seed)
 img.SetTiles(app.tileSet)
 img.GenerateImage()
+img.Scale(20)
 

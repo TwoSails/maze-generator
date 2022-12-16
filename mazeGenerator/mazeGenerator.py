@@ -64,11 +64,12 @@ class App:
             expansion.extend(tile.expand())
         self.tileSet.extend(expansion)
 
-    def setupBoard(self, height, width):
+    def setupBoard(self, height, width, seed=0):
         """
         Configures the dimensions to create the board and adds the tile set to the algorithm
         :param height:
         :param width:
+        :param seed:
         :return:
         """
         if len(self.tileSet) == 0:
@@ -76,6 +77,7 @@ class App:
         self.board.setHeight(height)
         self.board.setWidth(width)
         self.board.tileSet = self.tileSet
+        self.board.setSeed(seed)
         self.board.generateBoard()
 
     def run(self) -> Response:

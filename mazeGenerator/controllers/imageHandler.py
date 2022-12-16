@@ -15,12 +15,14 @@ from typing import List
 
 # External Packages
 from PIL import Image as ImageFuncs
+from PIL import ImageDraw, PngImagePlugin
 from PIL.Image import Image
 
 
 class ImageHandler:
     def __init__(self, width: int = -1, height: int = -1, tileImageResolution: int = -1, tileResolution: int = -1,
-                 tileSet: List[Tile] = None, board: List[Cell] = None, tileSetName: str = "", name: str = ""):
+                 tileSet: List[Tile] = None, board: List[Cell] = None, tileSetName: str = "", name: str = "",
+                 seed: str = ""):
         """
         :param width: Number of cells in the horizontal
         :param height: Number of cells in the vertical
@@ -30,6 +32,7 @@ class ImageHandler:
         :param board: List of cells
         :param tileSetName: Name of the tile set used
         :param name: Name of the image output
+        :param seed: The boards seed for generation
         """
         if tileSet is None:
             tileSet = []
@@ -46,6 +49,7 @@ class ImageHandler:
         self.name: str = name
         self.tileResolution: int = tileResolution
         self.maze: Image | None = None
+        self.seed: str = seed
 
     @staticmethod
     def ValidateMultiTypeInputToInteger(validate, bound: int = 0) -> Response:
@@ -99,6 +103,10 @@ class ImageHandler:
             self.tileImageResolution = validate.data
 
         return validate
+
+    def SetSeed(self, seed) -> Response:
+        self.seed = str(seed)
+        return Ok()
 
     def GetIdx(self, row: int, col: int) -> Response:
         if row > self.height or col > self.width or row < 0 or col < 0:
@@ -160,8 +168,10 @@ class ImageHandler:
     def SaveImage(self):
         outputDir = self.config.get("outputImgPath")
         filePath = f"{outputDir}{self.name if self.name != '' else self.tileSetName}.png"
+        metadata = PngImagePlugin.PngInfo()
+        metadata.add_text("maze-seed", f"{self.seed}")
         try:
-            self.maze.save(filePath)
+            self.maze.save(filePath, pnginfo=metadata)
         except ValueError:
             return Err(ValueError)
         except OSError:
@@ -193,3 +203,15 @@ class ImageHandler:
             print(sum(AVG) / len(pixels))
 
         print(f"{palettes=}")
+
+    def Scale(self, scale=2):
+        scaled_img = ImageFuncs.new("RGBA", (self.maze.width * scale, self.maze.height * scale))
+        draw = ImageDraw.Draw(scaled_img)
+        for xy, pixel in enumerate(list(self.maze.getdata())):
+            x = xy % self.maze.width
+            y = xy // self.maze.height
+            draw.rectangle((x * scale, y * scale, x * scale + scale, y * scale + scale), fill=pixel, outline=None)
+        outputDir = self.config.get("outputImgPath")
+        metadata = PngImagePlugin.PngInfo()
+        metadata.add_text("maze-seed", f"{self.seed}")
+        scaled_img.save(f"{outputDir}{self.name if self.name != '' else self.tileSetName}_scaled.png", pnginfo=metadata)
