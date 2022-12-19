@@ -20,6 +20,8 @@ from mazeGenerator.response.response import Ok, Err, Response
 from mazeGenerator.response.exceptions import InvalidResolution, TileNameNotSet, TileDoesNotExist, \
         TileSetDoesNotExist, InvalidEdgeLabel, TileNotLoaded, TileNotActive, TileSetNameNotSet
 
+from mazeGenerator.response.pool import OkResponse
+
 
 class Tile:
     def __init__(self) -> None:
@@ -175,12 +177,13 @@ class Tile:
 
         edgeTransformed = None
 
-        for edge in self.__edges:
-            if edge.transformation == transformation:
-                edgeTransformed = edge
-
         if transformation is None and len(self.__edges) == 1:
             edgeTransformed = self.__edges[0]
+        else:
+            for edge in self.__edges:
+                if edge.transformation == transformation:
+                    edgeTransformed = edge
+                    break
 
         if direction == "pos-x":
             label = edgeTransformed.positiveX()
@@ -193,7 +196,7 @@ class Tile:
         else:
             return Err(InvalidEdgeLabel)
 
-        return Ok(label)
+        return OkResponse(label)
 
     def getEdgeLabels(self, transformation):
         for edge in self.__edges:

@@ -8,6 +8,7 @@ from mazeGenerator.config import Config
 from mazeGenerator.models import Tile, Cell
 from mazeGenerator.response import Response, Ok, Err
 from mazeGenerator.response import ExceedsBounds, EmptyBoard
+from mazeGenerator.response.pool import OkResponse
 
 from typing import List
 
@@ -50,7 +51,7 @@ class Board:
             return Err(ExceedsBounds)
 
         idx = (row * self.width + col)
-        return Ok(idx)
+        return OkResponse(idx)
 
     def getNeighbours(self, row: int, col: int) -> List[Cell]:
         neighbours: List[Cell] = []
@@ -79,7 +80,7 @@ class Board:
         if len(self.board) == 0:
             return Err(EmptyBoard)
         lowestEntropy = self.board[0]
-        for cell in self.board:
+        for cell in list(filter(lambda c: not c.collapsed, self.board)):
             if ((cell.entropy < lowestEntropy.entropy and not cell.collapsed)
                     or (not cell.collapsed and lowestEntropy.collapsed)):
                 # This was the line of code which posed the most issues due to it overwriting lowest cell with collapsed
@@ -147,6 +148,7 @@ class Board:
             if not self.board[idx].collapsed:
                 complete = False
             idx += 1
+
         return complete
 
     def stateInvalid(self) -> bool:

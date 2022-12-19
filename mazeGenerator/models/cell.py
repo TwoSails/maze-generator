@@ -13,7 +13,7 @@ class Cell:
     def __init__(self, tileSet: List[Tile], row: int = -1, col: int = -1, seed: str | int = 0):
         self.seed = seed
         self.collapsed: bool = False
-        self.__entropy: int = int(1e9)
+        self.entropy: int = len(tileSet)
         self.availableTiles: List[Tile] = tileSet
         self.__transformation: Transformation | None = None
         self.tile: Tile | None = None
@@ -31,15 +31,6 @@ class Cell:
         if self.tile is None:
             return None
         return self.tile.getTransformation()
-
-    @property
-    def entropy(self) -> int:
-        self.__entropy = len(self.availableTiles)
-        return self.__entropy
-
-    @entropy.setter
-    def entropy(self, i: int):
-        self.__entropy = i
 
     def getTile(self) -> Tile:
         return self.tile
@@ -61,8 +52,10 @@ class Cell:
         self.tile = choice(self.availableTiles)
         self.collapsed = True
         self.availableTiles = [self.tile]  # This overwrites the calculation for entropy so sets cell entropy to 1
+        self.entropy = len(self.availableTiles)
 
         return Ok(self.tile)
 
     def reduce(self, edge_label, direction):
         self.availableTiles = list(filter(lambda tile: tile.getEdge(direction).data == edge_label, self.availableTiles))
+        self.entropy = len(self.availableTiles)

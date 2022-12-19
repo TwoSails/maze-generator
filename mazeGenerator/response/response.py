@@ -2,6 +2,8 @@ from typing import Any
 
 
 class Response:
+    __slots__ = ["success", "data", "error"]
+
     def __init__(self, success: bool, data: Any, error) -> None:
         self.success = success
         self.data = data
