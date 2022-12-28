@@ -28,3 +28,8 @@ To enter the virtual environment, run:
 * Unix or MacOS: `source venv/bin/activate`
 
 * Windows: `venv/Scripts/activate.bat` (Windows virtual environment not tested)
+
+## Cython Code
+To compile the Cython code, run the command:
+
+`python3 setup.py build_ext --inplace`

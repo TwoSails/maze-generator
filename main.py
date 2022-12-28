@@ -14,17 +14,19 @@ from tests.benchmark import execute_benchmark
 
 def main():
     app = App()
-    app.loadTileSet("default")
-    app.transformTileSet()
-    app.setupBoard(50, 50, "8143848079")
+    app.loadTileSet("circuit", False)
+    app.setupBoard(5, 5)  # seed= "8143848079"
     seed = app.board.seed
 
     print(f"{seed=}")
 
+    print(f"{app.tileSet=}")
+
     resApp = app.run()
+    print(f"{resApp.success=}")
     img = ImageHandler(width=app.board.width, height=app.board.height,
-                       tileImageResolution=3, tileResolution=3,
-                       board=resApp.data, tileSetName="default", seed=seed)
+                       tileImageResolution=app.tileImageResolution, tileResolution=app.tileResolution,
+                       board=resApp.data, tileSetName=app.tileSetName, seed=seed)
     img.SetTiles(app.tileSet)
     img.GenerateImage()
     img.Scale(20)
@@ -41,7 +43,7 @@ def test(b):
 
 if __name__ == "__main__":
     # execute_benchmark("results/benchmark_12:54:36-17-Dec-2022.csv")
-    start_time = time.perf_counter()
+    # start_time = time.perf_counter()
     main()
     # test(1)
-    print(f"executed in {time.perf_counter() - start_time}s")
+    # print(f"executed in {time.perf_counter() - start_time}s")

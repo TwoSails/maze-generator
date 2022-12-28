@@ -27,7 +27,7 @@ def main(width, height, seed=0):
 
 
 def save_data(data):
-    with open(f"results/benchmark_{time.strftime('%H:%M:%S-%d-%h-%Y')}.csv", "w") as file:
+    with open(f"results/benchmark_{time.strftime('%Hh%Mm%Ss%d-%h-%Y')}.csv", "w") as file:
         file.writelines(data)
 
 

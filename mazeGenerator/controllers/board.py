@@ -2,6 +2,7 @@
 File: board.py
 Date Created: 19/11/22
 """
+import asyncio
 import random
 
 from mazeGenerator.config import Config
@@ -9,6 +10,8 @@ from mazeGenerator.models import Tile, Cell
 from mazeGenerator.response import Response, Ok, Err
 from mazeGenerator.response import ExceedsBounds, EmptyBoard
 from mazeGenerator.response.pool import OkResponse
+
+from mazeGenerator.controllers.boardHelper import getIdx, getNeighbourIndexes
 
 from typing import List
 
@@ -20,6 +23,8 @@ class Board:
         self.width: int = 0
         self.tileSet: List[Tile] = []
         self.board: List[Cell] = []
+        self.idxCache = {}
+        self.neighbourCache = {}
         self.collapsed = False
         self.seed = 0
 
@@ -50,23 +55,21 @@ class Board:
         if row > self.height or col > self.width or row < 0 or col < 0:
             return Err(ExceedsBounds)
 
+        if f"{row}-{col}" in self.idxCache.keys():
+            return OkResponse(self.idxCache[f"{row}-{col}"])
+
         idx = (row * self.width + col)
+        self.idxCache[f"{row}-{col}"] = idx
         return OkResponse(idx)
 
     def getNeighbours(self, row: int, col: int) -> List[Cell]:
-        neighbours: List[Cell] = []
-        for delta_row, delta_col in ((1, 0), (0, 1), (0, -1), (-1, 0)):
-            neighbour_row = (row + delta_row) % self.height
-            neighbour_col = (col + delta_col) % self.width
+        if f"{row}-{col}" in self.neighbourCache.keys():
+            return self.neighbourCache[f"{row}-{col}"]
+        neighboursIdx = getNeighbourIndexes(row, col, self.width, self.height)
 
-            if abs(neighbour_row - row) > 1 or abs(neighbour_col - col) > 1:
-                continue
-
-            idx = self.getIdx(neighbour_row, neighbour_col)
-            if idx.success:
-                neighbours.append(self.board[idx.data])
-
-        return neighbours
+        neighbours_new = [self.board[idx] for idx in neighboursIdx if idx != -1]
+        self.neighbourCache[f"{row}-{col}"] = neighbours_new
+        return neighbours_new
 
     def generateBoard(self):
         if self.seed == 0:

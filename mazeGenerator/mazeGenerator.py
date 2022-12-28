@@ -18,6 +18,9 @@ class App:
         self.board = Board()
         self.config = Config()
         self.tileSet: List[Tile] = []
+        self.tileSetName = ""
+        self.tileResolution = 0
+        self.tileImageResolution = 0
 
     def loadTileSet(self, tileSet, transform: bool = True) -> Response:
         """
@@ -47,6 +50,10 @@ class App:
             res = self.tileSet[-1].loadImage()
             if not res.success:
                 return res
+
+        self.tileSetName = tileSet
+        self.tileImageResolution = tileSetConfig["imgResolution"]
+        self.tileResolution = tileSetConfig["resolution"]
 
         if transform:
             self.transformTileSet()
