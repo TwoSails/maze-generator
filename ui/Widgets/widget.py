@@ -1,32 +1,37 @@
 from tkinter import Frame
 
 from typing import Dict, Any, Tuple, List
+from abc import abstractmethod
 
-from ui.Components import Row
+from ui.Row import Row
+from ui.Inputs import NumberInput, BooleanInput, ButtonInput
+from ui.Labels import Text
+from ui.misc import NoneTypeCheck
 
 
 class Widget:
     def __init__(self, parent: Frame, arrangement: Dict[str, Any], geometry: Tuple[int] | List[int], **kwargs):
         self.parentFrame: Frame = parent
-        self.height: float = self.NoneTypeCheck(arrangement.get("height"), 0.0)
-        self.width: float = self.NoneTypeCheck(arrangement.get("width"), 0.0)
-        self.x: int = self.NoneTypeCheck(arrangement.get("x"))
-        self.y: int = self.NoneTypeCheck(arrangement.get("y"))
-        self.absoluteCoordinates = self.NoneTypeCheck(arrangement.get("absoluteCoordinates"), False)
-        self.absoluteDimensions = self.NoneTypeCheck(arrangement.get("absoluteDimensions"), False)
+        self.style = arrangement
+        self.height: float = NoneTypeCheck(arrangement.get("height"), 0.0)
+        self.width: float = NoneTypeCheck(arrangement.get("width"), 0.0)
+        self.x: int = NoneTypeCheck(arrangement.get("x"))
+        self.y: int = NoneTypeCheck(arrangement.get("y"))
+        self.absoluteCoordinates = NoneTypeCheck(arrangement.get("absoluteCoordinates"), False)
+        self.absoluteDimensions = NoneTypeCheck(arrangement.get("absoluteDimensions"), False)
         self.geometry = geometry
         self.widgetFrame = Frame(self.parentFrame,
                                  height=self.getAbsoluteHeight(),
                                  width=self.getAbsoluteWidth(),
                                  **kwargs)
+        self.components = {
+            "Text": Text,
+            "Row": Row,
+            "NumberInput": NumberInput,
+            "BooleanInput": BooleanInput,
+            "ButtonInput": ButtonInput
+        }
         self.rows = []
-
-    @staticmethod
-    def NoneTypeCheck(arg, null: Any = 0):
-        if arg is None:
-            return null
-
-        return arg
 
     def getAbsoluteWidth(self):
         return self.width if self.absoluteDimensions else self.width * self.geometry[0]
@@ -42,7 +47,6 @@ class Widget:
 
     def place(self):
         if self.absoluteDimensions:
-            print(f"x={self.getAbsoluteX()} y={self.getAbsoluteY()} height={self.getAbsoluteHeight()}, width={self.getAbsoluteWidth()}")
             self.widgetFrame.place(x=self.getAbsoluteX(),
                                    y=self.getAbsoluteY(),
                                    height=self.getAbsoluteHeight(),
@@ -55,7 +59,7 @@ class Widget:
                                    relheight=self.height,
                                    relwidth=self.width)
 
-    def addRow(self):
+    def addRow(self) -> Row:
         self.rows.append(Row(self.widgetFrame, self.geometry))
         return self.rows[-1]
 
@@ -76,3 +80,7 @@ class Widget:
             return
 
         self.rows.insert(idx + 1, row)
+
+    @abstractmethod
+    def display(self, window: str = ""):
+        pass

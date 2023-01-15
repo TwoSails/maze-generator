@@ -1,21 +1,23 @@
 from tkinter import Frame
 from tkinter import ttk
 
-from typing import Optional
+from typing import Optional, Tuple, List, Dict
 
-from ui.Inputs import Input
+from ui.Components import Component
 
 
-class NumberInput(Input):
-    def __init__(self, parent: Frame):
-        super().__init__(parent)
+class NumberInput(Component):
+    def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int], _from: int = 0, to: int = 100):
+        super().__init__(parent, style, geometry)
+        self.fromVal = _from
+        self.toVal = to
         self.value = 10
-        self.component: Optional[ttk.Spinbox] = None  # To adjust for type hinting
-        self.setComponent(ttk.Spinbox(self.componentFrame))
+        self.component = ttk.Spinbox(self.componentFrame, _from=self.fromVal, to=self.toVal)
 
     def setRange(self, _from: int, to: int):
-        self.setComponent(ttk.Spinbox(self.componentFrame, _from=_from, to=to))
-        self.setValue()
+        self.fromVal = _from
+        self.toVal = to
+        self.component = ttk.Spinbox(self.componentFrame, _from=self.fromVal, to=self.toVal)
         if self.active:
             self.refresh()
 

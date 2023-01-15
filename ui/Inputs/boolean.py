@@ -1,17 +1,18 @@
 from tkinter import Frame, IntVar
 from tkinter import ttk
 
-from typing import Optional
+from typing import Optional, Dict, Tuple, List
 
-from ui.Inputs import Input
+from ui.Components import Component
 
 
-class BooleanInput(Input):
-    def __init__(self, parent: Frame, text: str = ""):
-        super().__init__(parent)
+class BooleanInput(Component):
+    def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int], text: str = ""):
+        super().__init__(parent, style, geometry)
         self.state: IntVar = IntVar()
         self.component: Optional[ttk.Checkbutton] = None
-        self.setComponent(ttk.Checkbutton(self.componentFrame, text=text, variable=self.state))
+        self.text = text
+        self.component = ttk.Checkbutton(self.componentFrame, text=self.text, variable=self.state)
 
     def setState(self, state: Optional[bool]):
         if state is not None:

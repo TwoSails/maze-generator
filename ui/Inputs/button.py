@@ -1,22 +1,18 @@
 from tkinter import Frame
 from tkinter import ttk
-from tkinter import constants as const
 
-from typing import Optional
+from typing import Optional, Dict, Tuple, List
 
-from ui.Inputs import Input
+from ui.Components import Component
 
 
-class ButtonInput(Input):
-    def __init__(self, parent: Frame, text: str, command: Optional[callable] = None):
-        super().__init__(parent)
+class ButtonInput(Component):
+    def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int], text: str, command: Optional[callable] = None):
+        super().__init__(parent, style, geometry)
         self.text = text
-        self.setComponent(ttk.Button(self.componentFrame, text=text, command=command))
-        self.setHeight(40)
-        self.setWidth(119)
-        self.setAlignment(const.CENTER)
+        self.component = ttk.Button(self.componentFrame, text=self.text, command=command)
 
     def setCommand(self, command: callable):
-        self.setComponent(ttk.Button(self.componentFrame, text=self.text, command=command))
+        self.component = ttk.Button(self.componentFrame, text=self.text, command=command)
         if self.active:
             self.refresh()
