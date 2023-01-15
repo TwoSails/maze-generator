@@ -1,0 +1,120 @@
+{
+  "windows": [{
+    "name": "main",
+    "widgets": ["Sidebar", "Board"]
+    }],
+  "widgets": {
+    "Sidebar": {
+      "height": 1.0,
+      "width": 0.25,
+      "x": 0,
+      "y": 0,
+      "absoluteCoordinates": true,
+      "absoluteDimensions": false,
+      "windows": ["main", "analysis"],
+      "elements": {
+        "main": [
+          {
+            "type": "Row",
+            "contentLeft": {
+              "type": "Text",
+              "text": "Wave Function\nCollapse",
+              "height": 120,
+              "width": "0.25r",
+              "x": 20,
+              "y": 20,
+              "font": "Open Sans",
+              "font-weight": "bold",
+              "font-size": "36"
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "contentLeft": {
+              "type": "Text",
+              "text": "Height:",
+              "height": 120,
+              "width": "0.25r",
+              "x": -10,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "20"
+            },
+            "contentRight": {
+              "type": "NumberInput",
+              "from": 0,
+              "to": 50,
+              "height": 26,
+              "width": 90,
+              "x": 170,
+              "y": 180
+            }
+          },
+          {
+            "type": "Row",
+            "contentLeft": {
+              "type": "Text",
+              "text": "Width",
+              "height": 26,
+              "width": 80,
+              "x": 20,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "20"
+            },
+            "contentRight": {
+              "type": "NumberInput",
+              "from": 0,
+              "to": 50,
+              "height": 26,
+              "width": 90,
+              "x": 170,
+              "y": 180
+            }
+          },
+          {
+            "type": "Row",
+            "contentLeft": {
+              "type": "Text"
+            },
+            "contentRight": null
+          }
+        ],
+        "analysis": [
+
+        ]
+      }
+    },
+    "Board": {
+      "height": 1.0,
+      "width": 0.75,
+      "x": 0.25,
+      "y": 0,
+      "absoluteCoordinates": false,
+      "absoluteDimensions": false,
+      "windows": ["main"],
+      "elements": {
+        "main": [
+
+        ]
+      }
+    },
+    "CallStack": {
+      "height": 1.0,
+      "width": 0.75,
+      "x": 0.25,
+      "y": 0,
+      "absoluteCoordinates": false,
+      "absoluteDimensions": false,
+      "windows": ["analysis"],
+      "elements": {
+        "analysis": [
+
+        ]
+      }
+    }
+  }
+}
