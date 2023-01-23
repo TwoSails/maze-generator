@@ -8,10 +8,10 @@ from ui.Windows import Window
 
 
 class View(Tk):
-    def __init__(self, title: str = "App"):
+    def __init__(self):
         super().__init__()
         self.__config = Config()
-        self.wm_title(title)
+        self.wm_title(self.__config.config.get("title"))
         self.geometryDimensions = [min([1440, self.winfo_screenwidth()]), min([1024, self.winfo_screenheight() - 100])]
         self.wm_geometry(f"{self.geometryDimensions[0]}x{self.geometryDimensions[1]}")
         self.wm_resizable(0, 0)

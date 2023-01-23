@@ -3,12 +3,14 @@
     "name": "main",
     "widgets": ["Sidebar", "Board"]
     }],
+  "title": "Wave Function Collapse",
   "widgets": {
     "Sidebar": {
       "height": 1.0,
       "width": 0.25,
       "x": 0,
       "y": 0,
+      "background-colour": "#333333",
       "absoluteCoordinates": true,
       "absoluteDimensions": false,
       "windows": ["main", "analysis"],
@@ -16,69 +18,178 @@
         "main": [
           {
             "type": "Row",
+            "x": 0,
+            "y": 20,
             "contentLeft": {
               "type": "Text",
               "text": "Wave Function\nCollapse",
-              "height": 120,
+              "height": 100,
               "width": "0.25r",
-              "x": 20,
-              "y": 20,
+              "x": 0,
+              "y": 0,
               "font": "Open Sans",
               "font-weight": "bold",
-              "font-size": "36"
+              "font-size": "36",
+              "justify": "centre"
             },
             "contentRight": null
           },
           {
             "type": "Row",
+            "x": 0,
+            "y": 140,
             "contentLeft": {
               "type": "Text",
               "text": "Height:",
-              "height": 120,
-              "width": "0.25r",
-              "x": -10,
+              "height": 40,
+              "width": "0.15r",
+              "x": "0.05r",
               "y": 0,
               "font": "Open Sans",
               "font-weight": "normal",
-              "font-size": "20"
+              "font-size": "20",
+              "justify": "left"
             },
             "contentRight": {
               "type": "NumberInput",
               "from": 0,
               "to": 50,
-              "height": 26,
-              "width": 90,
-              "x": 170,
-              "y": 180
+              "height": 40,
+              "width": "0.07r",
+              "x": 0,
+              "y": 0,
+              "justify": "left",
+              "i-padding-x": 20,
+              "background-colour": "#333333"
             }
           },
           {
             "type": "Row",
+            "x": 0,
+            "y": 190,
             "contentLeft": {
               "type": "Text",
-              "text": "Width",
-              "height": 26,
-              "width": 80,
-              "x": 20,
+              "text": "Width:",
+              "height": 40,
+              "width": "0.15r",
+              "x": "0.05r",
               "y": 0,
               "font": "Open Sans",
               "font-weight": "normal",
-              "font-size": "20"
+              "font-size": "20",
+              "justify": "left"
             },
             "contentRight": {
               "type": "NumberInput",
               "from": 0,
               "to": 50,
-              "height": 26,
-              "width": 90,
-              "x": 170,
-              "y": 180
+              "height": 40,
+              "width": "0.07r",
+              "x": 0,
+              "y": 0,
+              "justify": "left",
+              "i-padding-x": 20,
+              "background-colour": "#333333"
             }
           },
           {
             "type": "Row",
+            "x": 0,
+            "y": 240,
             "contentLeft": {
-              "type": "Text"
+              "type": "Text",
+              "text": "Height and Width inputs range 0 - 50",
+              "height": 20,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "centre"
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 270,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Generations:",
+              "height": 40,
+              "width": "0.15r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "20",
+              "justify": "left"
+            },
+            "contentRight": {
+              "type": "NumberInput",
+              "from": 0,
+              "to": 10,
+              "height": 40,
+              "width": "0.07r",
+              "x": 0,
+              "y": 0,
+              "justify": "left",
+              "i-padding-x": 20,
+              "background-colour": "#333333"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 320,
+            "contentLeft": {
+              "type": "Text",
+              "text": "The app can generate 1 - 10 mazes",
+              "height": 20,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "centre"
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 350,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Seed",
+              "height": 40,
+              "width": "0.15r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "20",
+              "justify": "left"
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 370,
+            "contentLeft": {
+              "type": "BooleanInput",
+              "text": "Log",
+              "height": 20,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "centre"
             },
             "contentRight": null
           }
@@ -95,6 +206,7 @@
       "y": 0,
       "absoluteCoordinates": false,
       "absoluteDimensions": false,
+      "background-colour": "#D9D9D9",
       "windows": ["main"],
       "elements": {
         "main": [

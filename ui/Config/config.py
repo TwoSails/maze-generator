@@ -20,3 +20,5 @@ class Config:
                 self.loadedConfig = True
         except FileNotFoundError or JSONDecodeError:
             pass
+        except json.decoder.JSONDecodeError:
+            raise Exception("Failed to load configuration - Invalid JSON Format")

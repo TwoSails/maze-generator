@@ -1,6 +1,6 @@
 from tkinter import Frame
 
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 
 from ui.misc import NoneTypeCheck
 
@@ -14,9 +14,13 @@ class Component:
         self.width: float = NoneTypeCheck(style.get("width"), 0.0)
         self.x: int = NoneTypeCheck(style.get("x"))
         self.y: int = NoneTypeCheck(style.get("y"))
+        self.backgroundColour: str = NoneTypeCheck(style.get("background-colour"), "")
+        self.internalPaddingX: int = NoneTypeCheck(style.get("i-padding-x"), 0)
+        self.internalPaddingY: int = NoneTypeCheck(style.get("i-padding-y"), 0)
         self.componentFrame: Frame = Frame(self.parentFrame,
                                            height=self.getAbsoluteHeight(),
-                                           width=self.getAbsoluteWidth())
+                                           width=self.getAbsoluteWidth(),
+                                           bg=self.backgroundColour)
         self.component = None
         self.active = False
         self.build()
@@ -49,12 +53,26 @@ class Component:
             return y * self.geometry[1]
         return y
 
-    def build(self):
+    def getRelativeX(self):
+        return self.getAbsoluteX() / self.geometry[0]
+
+    def getRelativeY(self):
+        return self.getAbsoluteY() / self.geometry[1]
+
+    def build(self, alignment: Optional[int] = None):
+        print(f"Building {self.style.get('type')} Component: {self.active}")
         if self.component is None:
             return False
-        self.componentFrame.pack()
-        self.component.place(x=self.getAbsoluteX(),
-                             y=self.getAbsoluteY(),
+        if alignment is None:
+            self.componentFrame.pack(anchor="w",
+                                     ipadx=self.internalPaddingX,
+                                     ipady=self.internalPaddingY)
+        else:
+            self.componentFrame.grid(row=0, column=alignment,
+                                     ipadx=self.internalPaddingX,
+                                     ipady=self.internalPaddingY)
+        self.component.place(relx=self.getRelativeX(),
+                             rely=self.getRelativeY(),
                              height=self.getAbsoluteHeight(),
                              width=self.getAbsoluteWidth())
         self.active = True
@@ -65,6 +83,7 @@ class Component:
             return False
         self.component.destroy()
         self.componentFrame.destroy()
+        print(f"Destroyed {self.style.get('type')} Component")
 
     def refresh(self):
         if self.active:

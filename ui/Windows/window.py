@@ -12,7 +12,7 @@ class Window:
         self.parentFrame = parent
         self.settings = settings
         self.geometry = geometry
-        self.contentFrame = Frame(self.parentFrame, bg="pink")
+        self.contentFrame = Frame(self.parentFrame)
         self.contentFrame.pack(fill="both", expand=True)
         self.widgets: Dict[str, Widget] = {}
 
@@ -43,4 +43,4 @@ class Window:
 
     def destroy(self):
         self.contentFrame.destroy()
-        self.contentFrame = Frame(self.parentFrame, bg="pink")
+        self.contentFrame = Frame(self.parentFrame)

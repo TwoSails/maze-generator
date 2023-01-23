@@ -8,7 +8,7 @@ active = True
 
 class Board(Widget):
     def __init__(self, parent: Frame, style, geometry):
-        super().__init__(parent, style, geometry, bg="#00ff00")
+        super().__init__(parent, style, geometry)
         self.place()
 
     def display(self, window: str = ""):
