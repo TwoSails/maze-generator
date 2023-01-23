@@ -9,6 +9,8 @@ import time
 from mazeGenerator.mazeGenerator import App
 from mazeGenerator.controllers import ImageHandler
 
+from ui.view import View
+
 from tests.benchmark import execute_benchmark
 
 
@@ -41,9 +43,16 @@ def test(b):
         a = 0
     print(f"executed in {time.perf_counter() - s_time}")
 
+
+def gui():
+    ui = View()
+    ui.displayWindow("main")
+    ui.mainloop()
+
+
 if __name__ == "__main__":
     # execute_benchmark("results/benchmark_12:54:36-17-Dec-2022.csv")
     # start_time = time.perf_counter()
-    main()
+    gui()
     # test(1)
     # print(f"executed in {time.perf_counter() - start_time}s")

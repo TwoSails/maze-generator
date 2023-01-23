@@ -4,8 +4,7 @@ from typing import Dict, Any, Tuple, List, Optional
 from abc import abstractmethod
 
 from ui.Row import Row
-from ui.Inputs import NumberInput, BooleanInput, ButtonInput
-from ui.Labels import Text
+from ui.Components import NumberInput, BooleanInput, ButtonInput, Text
 from ui.misc import NoneTypeCheck
 
 
