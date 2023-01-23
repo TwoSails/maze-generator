@@ -11,7 +11,7 @@ from mazeGenerator.response import Response, Ok, Err
 from mazeGenerator.response import ExceedsBounds, EmptyBoard
 from mazeGenerator.response.pool import OkResponse
 
-from mazeGenerator.controllers.boardHelper import getIdx, getNeighbourIndexes
+from mazeGenerator.controllers.boardHelper import getNeighbourIndexes
 
 from typing import List
 
