@@ -12,6 +12,7 @@ class NumberInput(Component):
         self.fromVal = from_
         self.toVal = to
         self.value = 10
+        self.fetchData = self.get
         self.component = ttk.Spinbox(self.componentFrame, from_=self.fromVal, to=self.toVal)
 
     def setRange(self, _from: int, to: int):
@@ -29,5 +30,5 @@ class NumberInput(Component):
 
         self.component.set(value)
 
-    def getInput(self):
+    def get(self):
         return self.component.get()

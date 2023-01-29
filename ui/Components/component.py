@@ -1,4 +1,5 @@
 from tkinter import Frame
+from tkinter import ttk
 
 from typing import Dict, Tuple, List, Optional
 
@@ -14,7 +15,7 @@ class Component:
         self.width: float = NoneTypeCheck(style.get("width"), 0.0)
         self.x: int = NoneTypeCheck(style.get("x"))
         self.y: int = NoneTypeCheck(style.get("y"))
-        self.backgroundColour: str = NoneTypeCheck(style.get("background-colour"), "")
+        self.backgroundColour: str = NoneTypeCheck(style.get("background-colour"), None)
         self.internalPaddingX: int = NoneTypeCheck(style.get("i-padding-x"), 0)
         self.internalPaddingY: int = NoneTypeCheck(style.get("i-padding-y"), 0)
         self.componentFrame: Frame = Frame(self.parentFrame,
@@ -22,11 +23,15 @@ class Component:
                                            width=self.getAbsoluteWidth(),
                                            bg=self.backgroundColour)
         self.component = None
+        self.textLabel = None
         self.active = False
+        self.fetchData = None
         self.build()
 
     def getAbsoluteWidth(self):
         width: str | float = self.width
+        if "height" in str(width):
+            return self.getAbsoluteHeight()
         if "r" in str(width):
             width = float(width.strip("r"))
             return width * self.geometry[0]
@@ -34,6 +39,8 @@ class Component:
 
     def getAbsoluteHeight(self):
         height: str | float = self.height
+        if "width" in str(height):
+            return self.getAbsoluteWidth()
         if "r" in str(height):
             height = float(height.strip("r"))
             return height * self.geometry[1]
@@ -59,11 +66,14 @@ class Component:
     def getRelativeY(self):
         return self.getAbsoluteY() / self.geometry[1]
 
-    def build(self, alignment: Optional[int] = None):
-        print(f"Building {self.style.get('type')} Component: {self.active}")
+    def build(self, alignment: Optional[int] = None, drop: Optional[bool] = False, coords=[]):
+        # print(f"Building {self.style.get('type')} Component")
         if self.component is None:
             return False
-        if alignment is None:
+
+        if len(coords) == 2:
+            self.componentFrame.grid(row=coords[0], column=coords[1])
+        elif alignment is None:
             self.componentFrame.pack(anchor="w",
                                      ipadx=self.internalPaddingX,
                                      ipady=self.internalPaddingY)
@@ -71,10 +81,15 @@ class Component:
             self.componentFrame.grid(row=0, column=alignment,
                                      ipadx=self.internalPaddingX,
                                      ipady=self.internalPaddingY)
-        self.component.place(relx=self.getRelativeX(),
-                             rely=self.getRelativeY(),
-                             height=self.getAbsoluteHeight(),
-                             width=self.getAbsoluteWidth())
+        if drop:
+            self.component.grid(row=1, column=1)
+            if self.textLabel is not None:
+                self.textLabel.grid(row=2, column=1)
+        else:
+            self.component.place(relx=self.getRelativeX(),
+                                 rely=self.getRelativeY(),
+                                 height=self.getAbsoluteHeight(),
+                                 width=self.getAbsoluteWidth())
         self.active = True
         return True
 

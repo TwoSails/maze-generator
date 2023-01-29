@@ -19,5 +19,6 @@ class Text(Component):
                                      NoneTypeCheck(style.get("font-size"), 20),
                                      NoneTypeCheck(style.get("font-weight"), "")),
                                fg=self.textColour,
+                               bg=self.backgroundColour,
                                anchor=self.anchoring(self.justify)
                                )
