@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class Row:
-    def __init__(self, parent: Frame, geometry, x=0, y=0, bg: Optional[str] = "#ffffff"):
+    def __init__(self, parent: Frame, geometry, x=0, y=0, bg: Optional[str] = None):
         self.parentFrame = parent
         self.geometry = geometry
         self.maxWidth = 0
@@ -15,6 +15,20 @@ class Row:
         self.rowFrame = Frame(parent, bg=bg)
         self.contentLeft = None
         self.contentRight = None
+
+    def getAbsoluteWidth(self):
+        width: str | float = self.maxWidth
+        if "r" in str(width):
+            width = float(width.strip("r"))
+            return width * self.geometry[0]
+        return width
+
+    def getAbsoluteHeight(self):
+        height: str | float = self.height
+        if "r" in str(height):
+            height = float(height.strip("r"))
+            return height * self.geometry[1]
+        return height
 
     def getAbsoluteX(self):
         x: str | float = self.x
@@ -65,15 +79,22 @@ class Row:
         self.refresh()
 
     def setContentLeft(self, content):
+        if content is None:
+            return
         content.parentFrame = self.rowFrame
         self.contentLeft = content
 
     def setContentRight(self, content):
+        if content is None:
+            return 
         content.parentFrame = self.rowFrame
         self.contentRight = content
 
-    def build(self, *_):
-        self.rowFrame.place(relx=self.getRelativeX(), rely=self.getRelativeY())
+    def build(self, *_, drop: bool = False, coords=[]):
+        if drop and len(coords) == 2:
+            self.rowFrame.grid(row=coords[0], column=coords[1])
+        else:
+            self.rowFrame.place(relx=self.getRelativeX(), rely=self.getRelativeY())
         if self.contentLeft is not None:
             self.contentLeft.build(0)
         if self.contentRight is not None:
