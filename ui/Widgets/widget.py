@@ -1,10 +1,9 @@
 from tkinter import Frame
 
 from typing import Dict, Any, Tuple, List, Optional
-from abc import abstractmethod
 
-from ui.Row import Row
-from ui.Components import NumberInput, BooleanInput, ButtonInput, Text
+from ui.Layout import Row, Grid
+from ui.Components import NumberInput, BooleanInput, ButtonInput, Button, Text, Entry, Image, Canvas, Range, Paragraph, Progress
 from ui.misc import NoneTypeCheck
 
 
@@ -26,11 +25,19 @@ class Widget:
                                  bg=self.backgroundColour,
                                  **kwargs)
         self.components = {
-            "Text": Text,
+            "Grid": Grid,
             "Row": Row,
+            "Text": Text,
             "NumberInput": NumberInput,
             "BooleanInput": BooleanInput,
-            "ButtonInput": ButtonInput
+            "ButtonInput": ButtonInput,
+            "Button": Button,  # Canvas widget so custom style/shape
+            "Entry": Entry,
+            "Image": Image,
+            "Canvas": Canvas,
+            "Range": Range,
+            "Paragraph": Paragraph,
+            "Progress": Progress
         }
         self.rows = []
 
@@ -87,6 +94,54 @@ class Widget:
 
         self.rows.insert(idx + 1, row)
 
-    @abstractmethod
+    def configureRow(self, row, style):
+        if "width" in style:
+            row.setMaxWidth(style.get("width"))
+        if style["contentLeft"] is not None:
+            row.setContentLeft(self.explore(style["contentLeft"]))
+        if style["contentRight"] is not None:
+            row.setContentRight(self.explore(style["contentRight"]))
+        return row
+
+    def explore(self, style):
+        if style is None:
+            return
+        elementType = style.get("type")
+        if elementType is None:
+            return
+        if elementType == "Row":
+            row = Row(self.getRow(-1).rowFrame,
+                      self.geometry,
+                      x=NoneTypeCheck(style.get("x")),
+                      y=NoneTypeCheck(style.get("y")),
+                      bg=NoneTypeCheck(style.get("background-colour"), None))
+            row = self.configureRow(row, style)
+            return row
+
+        if elementType == "Grid":
+            grid = Grid(self.getRow(-1).rowFrame, style, self.geometry)
+            for elementStyle in style["elements"]:
+                element = self.explore(elementStyle)
+                grid.addElement(element)
+
+            return grid
+
+        element = self.components[elementType]
+        component = element(self.getRow(-1).rowFrame, style, self.geometry)
+        return component
+
     def display(self, window: str = ""):
-        pass
+        elements = self.style["elements"][window]
+        for element in elements:
+            elementType = element["type"]
+            if elementType not in self.components.keys():
+                continue
+            if elementType == "Row":
+                row = self.addRow(x=NoneTypeCheck(element.get("x"), 0),
+                                  y=NoneTypeCheck(element.get("y"), 0),
+                                  bg=NoneTypeCheck(element.get("background-colour"), "#ffffff"))
+                self.configureRow(row, element)
+
+    def build(self):
+        self.place()
+        self.buildRows()
