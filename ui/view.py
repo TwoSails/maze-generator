@@ -3,6 +3,7 @@ from typing import Dict
 
 from ui.Config import Config
 from ui.Windows import Window
+from ui.Controllers import Controller
 
 
 class View(Tk):
@@ -14,6 +15,7 @@ class View(Tk):
         self.wm_geometry(f"{self.geometryDimensions[0]}x{self.geometryDimensions[1]}")
         self.wm_resizable(0, 0)
         self.widgets = {}
+        self.controller = Controller()
         self.contentFrame = Frame(self, bg="#ff0000")
         self.contentFrame.pack(fill="both", expand=True)
         self.windows: Dict[str, Window] = {}
@@ -25,7 +27,8 @@ class View(Tk):
             self.windows[window["name"]] = Window(self.contentFrame,
                                                   window["name"],
                                                   self.__config.config,
-                                                  self.geometryDimensions)
+                                                  self.geometryDimensions,
+                                                  controller=self.controller)
 
     def displayWindow(self, name):
         if name not in self.windows.keys():

@@ -3,12 +3,17 @@ from tkinter import Frame
 from typing import Dict, Any, Tuple, List, Optional
 
 from ui.Layout import Row, Grid
-from ui.Components import NumberInput, BooleanInput, ButtonInput, Button, Text, Entry, Image, Canvas, Range, Paragraph, Progress
+from ui.Components import NumberInput, BooleanInput, ButtonInput, Button, Text, Entry, Image, Canvas, Range, \
+    Paragraph, Progress
 from ui.misc import NoneTypeCheck
+
+from ui.Controllers import Controller
 
 
 class Widget:
-    def __init__(self, parent: Frame, arrangement: Dict[str, Any], geometry: Tuple[int] | List[int], **kwargs):
+    def __init__(self, parent: Frame, arrangement: Dict[str, Any], geometry: Tuple[int] | List[int],
+                 controller: Optional[Controller] = None,
+                 **kwargs):
         self.parentFrame: Frame = parent
         self.style = arrangement
         self.height: float = NoneTypeCheck(arrangement.get("height"), 0.0)
@@ -24,6 +29,7 @@ class Widget:
                                  width=self.getAbsoluteWidth(),
                                  bg=self.backgroundColour,
                                  **kwargs)
+        self.controller = controller
         self.components = {
             "Grid": Grid,
             "Row": Row,
@@ -127,7 +133,13 @@ class Widget:
             return grid
 
         element = self.components[elementType]
-        component = element(self.getRow(-1).rowFrame, style, self.geometry)
+        command = style.get("command")
+        if elementType in ["Button", "ButtonInput"] and command is not None:
+            command = getattr(self.controller, command)
+            component = element(self.getRow(-1).rowFrame, style, self.geometry, command=command)
+        else:
+            component = element(self.getRow(-1).rowFrame, style, self.geometry)
+        self.controller.addComponent(component.tag, component)
         return component
 
     def display(self, window: str = ""):

@@ -14,7 +14,8 @@ class ButtonInput(Component):
                  command: Optional[callable] = None):
         super().__init__(parent, style, geometry)
         self.text = NoneTypeCheck(style.get("text"), "Button")
-        self.component = ttk.Button(self.componentFrame, text=self.text, command=command)
+        self.command = command
+        self.component = ttk.Button(self.componentFrame, text=self.text, command=self.command)
 
     def setCommand(self, command: callable):
         self.component = ttk.Button(self.componentFrame, text=self.text, command=command)
@@ -37,7 +38,8 @@ class Button(Component):
         self.font = (NoneTypeCheck(style.get("font"), ""),
                      NoneTypeCheck(style.get("font-size"), 20),
                      NoneTypeCheck(style.get("font-weight"), ""))
-        if command is not None:
+        self.command = command
+        if self.command is not None:
             self.component.bind("<Button-1>", command)
         self.component.create_text(self.getAbsoluteWidth() - (int(self.font[1]) * len(self.text) / 1.5),
                                    (self.getAbsoluteHeight() - int(self.font[1])),

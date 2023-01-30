@@ -22,6 +22,7 @@ class Component:
                                            height=self.getAbsoluteHeight(),
                                            width=self.getAbsoluteWidth(),
                                            bg=self.backgroundColour)
+        self.tag: str = NoneTypeCheck(style.get("tag"), None)
         self.component = None
         self.textLabel = None
         self.active = False
