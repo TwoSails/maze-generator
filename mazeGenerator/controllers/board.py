@@ -2,7 +2,6 @@
 File: board.py
 Date Created: 19/11/22
 """
-import asyncio
 import random
 
 from mazeGenerator.config import Config
@@ -72,7 +71,7 @@ class Board:
         return neighbours_new
 
     def generateBoard(self):
-        if self.seed == 0:
+        if self.seed == 0 or self.seed == "":
             self.seed = "".join([str(random.randint(0, 10)) for _ in range(10)])
         for row in range(self.height):
             for col in range(self.width):

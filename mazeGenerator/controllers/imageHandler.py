@@ -184,7 +184,7 @@ class ImageHandler:
         for cell in self.board:
             self.PlaceCell(cell.row, cell.col)
         # self.CalculateAverageColour()
-        self.SaveImage()
+        return self.SaveImage()
 
     def CalculateAverageColour(self):
         palettes = []

@@ -18,7 +18,7 @@ class Image(Component):
         self.anchoring = lambda x: "w" if x == "left" else "e" if x == "right" else "center"
         if self.filePath is not None:
             img = PillowImage.open(self.filePath)
-            img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.ANTIALIAS)
+            img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.NEAREST)
             img = ImageTk.PhotoImage(img)
             self.component = Label(self.componentFrame, image=img,
                                    bg=self.backgroundColour,
