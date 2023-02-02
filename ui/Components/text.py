@@ -22,3 +22,7 @@ class Text(Component):
                                bg=self.backgroundColour,
                                anchor=self.anchoring(self.justify)
                                )
+
+    def update(self, text):
+        self.component.config(text=text)
+        self.text = text

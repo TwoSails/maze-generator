@@ -1,6 +1,6 @@
 import threading
 import logging
-from PIL import Image, ImageTk
+from PIL import Image
 
 from typing import List
 
@@ -76,6 +76,34 @@ class Controller:
         img.SetTiles(maze.tileSet)
         img.GenerateImage()
 
+    def setSeed(self, seed):
+        if "SeedOut" not in self.components.keys():
+            return
+
+        seedComponent = self.components["SeedOut"]
+        seedComponent.update(f"Seed: {seed}")
+
+    def removeSeed(self):
+        if "SeedOut" not in self.components.keys():
+            return
+
+        seedComponent = self.components["SeedOut"]
+        seedComponent.update("")
+
+    def setRuntime(self, time):
+        if "RuntimeOut" not in self.components.keys():
+            return
+
+        runtimeComponent = self.components["RuntimeOut"]
+        runtimeComponent.update(f"Runtime: {round(time, 5)}s")
+
+    def removeRuntime(self):
+        if "RuntimeOut" not in self.components.keys():
+            return
+
+        runtimeComponent = self.components["RuntimeOut"]
+        runtimeComponent.update("")
+
     def generateMazes(self):
         threads = []
         for i, maze in enumerate(self.apps):
@@ -88,6 +116,14 @@ class Controller:
             thread.join()
             logging.warning(f"Maze {i} completed")
             self.drawBoard(i)
+            if self.fetch["SeedBool"]:
+                self.setSeed(self.apps[i].board.seed)
+            else:
+                self.removeSeed()
+            if self.fetch["RuntimeBool"]:
+                self.setRuntime(self.apps[i].runtime)
+            else:
+                self.removeRuntime()
 
     def button_run(self):
         self.apps = []

@@ -9,6 +9,7 @@ from mazeGenerator.response import Response, Ok, Err
 from mazeGenerator.response import TileSetDoesNotExist, InvalidState
 
 from typing import List
+from time import perf_counter
 import json
 import os
 
@@ -21,6 +22,7 @@ class App:
         self.tileSetName = ""
         self.tileResolution = 0
         self.tileImageResolution = 0
+        self.runtime = 0
 
     def loadTileSet(self, tileSet, transform: bool = True) -> Response:
         """
@@ -92,7 +94,10 @@ class App:
         Performs collapse
         :return: Cell Board | InvalidState
         """
+        start_time = perf_counter()
         self.board.performCollapse()
+        end_time = perf_counter()
+        self.runtime = end_time - start_time
         if self.board.collapsed:
             return Ok(self.board.board)
 
