@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class Row:
-    def __init__(self, parent: Frame, geometry, x=0, y=0, bg: Optional[str] = None):
+    def __init__(self, parent: Frame, geometry, x=0, y=0, bg: Optional[str] = None, tag: str = ""):
         self.parentFrame = parent
         self.geometry = geometry
         self.maxWidth = 0
@@ -15,6 +15,7 @@ class Row:
         self.rowFrame = Frame(parent, bg=bg)
         self.contentLeft = None
         self.contentRight = None
+        self.tag = tag
 
     def getAbsoluteWidth(self):
         width: str | float = self.maxWidth
@@ -90,7 +91,9 @@ class Row:
         content.parentFrame = self.rowFrame
         self.contentRight = content
 
-    def build(self, *_, drop: bool = False, coords=[]):
+    def build(self, *_, drop: bool = False, coords=None):
+        if coords is None:
+            coords = []
         if drop and len(coords) == 2:
             self.rowFrame.grid(row=coords[0], column=coords[1])
         else:
@@ -99,3 +102,13 @@ class Row:
             self.contentLeft.build(0)
         if self.contentRight is not None:
             self.contentRight.build(1)
+
+    def remove(self, left=False, right=False):
+        if left and self.contentLeft is not None:
+            if hasattr(self.contentLeft, "destroy"):
+                self.contentLeft.destroy()
+            self.contentLeft = None
+        if right and self.contentRight is not None:
+            if hasattr(self.contentRight, "destroy"):
+                self.contentRight.destroy()
+            self.contentRight = None

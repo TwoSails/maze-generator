@@ -102,3 +102,20 @@ class App:
             return Ok(self.board.board)
 
         return Err(InvalidState if self.board.stateInvalid() else None, data=self.board.board)
+
+    def countTiles(self):
+        tiles = {}
+        for tile in self.board.board:
+            if tile is None:
+                continue
+            if tile.tile is None:
+                continue
+            name = tile.tile.getName()
+            if name is None:
+                continue
+            if name in tiles.keys():
+                tiles[name] += 1
+            else:
+                tiles[name] = 1
+
+        return tiles

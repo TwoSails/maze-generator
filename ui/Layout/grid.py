@@ -8,6 +8,7 @@ from ui.Components import Component
 
 class Grid:
     def __init__(self, parent: Frame, style, geometry):
+        self.style = style
         self.parentFrame = parent
         self.geometry = geometry
         self.width = NoneTypeCheck(style.get("width"), 100)
@@ -17,6 +18,7 @@ class Grid:
         self.columns = NoneTypeCheck(style.get("columns"), "flex")
         self.padding = NoneTypeCheck(style.get("column-padding"), 10)
         self.backgroundColour = NoneTypeCheck(style.get("background-colour"), "#ffffff")
+        self.tag = NoneTypeCheck(style.get("tag"), "")
 
         self.gridFrame = Frame(parent,
                                width=self.getAbsoluteWidth(),
@@ -64,7 +66,20 @@ class Grid:
         element.parentFrame = self.grid[-1]
         self.elements.append(element)
 
-    def build(self, *_, drop: bool = False, coords=[]):
+    def addStrictElement(self, element: Component):
+        self.grid.append(Frame(self.gridFrame, bg=self.backgroundColour))
+        element.setParentFrame(self.grid[-1])
+        self.elements.append(element)
+
+    def reassembleElements(self):
+        self.grid = []
+        for element in self.elements:
+            self.grid.append(Frame(self.gridFrame, bg=self.backgroundColour))
+            element.parentFrame = self.grid[-1]
+
+    def build(self, *_, drop: bool = False, coords=None):
+        if coords is None:
+            coords = []
         width = [element.getAbsoluteWidth() + self.padding for element in self.elements]
         rowWidth = 0
         rows: List[List[Component]] = [[]]
@@ -85,7 +100,23 @@ class Grid:
                 self.grid[index].pack()
                 index += 1
         if drop and len(coords) == 2:
-            print(coords, ":)", rows)
             self.gridFrame.grid(row=coords[0], column=coords[1])
         else:
             self.gridFrame.place(relx=self.getRelativeX(), rely=self.getRelativeY())
+
+    def refresh(self):
+        self.gridFrame.destroy()
+        self.gridFrame = Frame(self.parentFrame,
+                               width=self.getAbsoluteWidth(),
+                               height=self.getAbsoluteHeight(),
+                               bg=self.backgroundColour)
+        for frame in self.grid:
+            frame.destroy()
+        self.reassembleElements()
+        self.build()
+
+    def destroy(self):
+        self.gridFrame.destroy()
+        for element in self.elements:
+            if hasattr(element, "destroy"):
+                element.destroy()

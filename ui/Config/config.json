@@ -489,11 +489,13 @@
             "x": "0.23r",
             "y": "0.82r",
             "background-colour": "#D9D9D9",
+            "tag": "TileRow",
             "contentLeft": {
               "type": "Grid",
               "height": 100,
               "width": "0.73rr",
               "columns": "flex",
+              "tag": "TileCount",
               "elements": [
                 {
                   "type": "Image",
@@ -508,7 +510,8 @@
                   "x": 0,
                   "y": 0,
                   "filename": "./data/default/01.png",
-                  "background-colour": "#D9D9D9"
+                  "background-colour": "#D9D9D9",
+                    "tag": "abcTile1"
                 },
                 {
                   "type": "Image",
@@ -523,7 +526,8 @@
                   "x": 0,
                   "y": 0,
                   "filename": "./data/default/02.png",
-                  "background-colour": "#D9D9D9"
+                  "background-colour": "#D9D9D9",
+                    "tag": "abcTile2"
                 },
                 {
                   "type": "Image",
@@ -538,8 +542,73 @@
                   "x": 0,
                   "y": 0,
                   "filename": "./data/default/03.png",
-                  "background-colour": "#D9D9D9"
-                }
+                  "background-colour": "#D9D9D9",
+                    "tag": "abcTile3"
+                },
+                  {
+                      "type": "Image",
+                      "text": "100x",
+                      "font": "Source Code Pro",
+                      "font-weight": "bold",
+                      "font-size": "13",
+                      "justify": "left",
+                      "colour": "#000000",
+                      "height": 40,
+                      "width": 40,
+                      "x": 0,
+                      "y": 0,
+                      "filename": "./data/default/04.png",
+                      "background-colour": "#D9D9D9",
+                      "tag": "abcTile4"
+                  },
+                  {
+                      "type": "Image",
+                      "text": "100x",
+                      "font": "Source Code Pro",
+                      "font-weight": "bold",
+                      "font-size": "13",
+                      "justify": "left",
+                      "colour": "#000000",
+                      "height": 40,
+                      "width": 40,
+                      "x": 0,
+                      "y": 0,
+                      "filename": "./data/default/05.png",
+                      "background-colour": "#D9D9D9",
+                      "tag": "abcTile5"
+                  },
+                  {
+                      "type": "Image",
+                      "text": "100x",
+                      "font": "Source Code Pro",
+                      "font-weight": "bold",
+                      "font-size": "13",
+                      "justify": "left",
+                      "colour": "#000000",
+                      "height": 40,
+                      "width": 40,
+                      "x": 0,
+                      "y": 0,
+                      "filename": "./data/default/06.png",
+                      "background-colour": "#D9D9D9",
+                      "tag": "abcTile6"
+                  },
+                  {
+                      "type": "Image",
+                      "text": "100x",
+                      "font": "Source Code Pro",
+                      "font-weight": "bold",
+                      "font-size": "13",
+                      "justify": "left",
+                      "colour": "#000000",
+                      "height": 40,
+                      "width": 40,
+                      "x": 0,
+                      "y": 0,
+                      "filename": "./data/default/03.png",
+                      "background-colour": "#D9D9D9",
+                      "tag": "abcTileOverflow"
+                  }
               ]
             },
             "contentRight": null
@@ -578,52 +647,39 @@
           },
           {
             "type": "Row",
-            "x": "0.4r",
-            "y": "0.93r",
+            "x": "0.3r",
+            "y": "0.95r",
             "background-colour": "#D9D9D9",
             "contentLeft": {
-              "type": "Grid",
-              "height": "0.03r",
-              "width": "0.57r",
+              "type": "Text",
+              "text": "Runtime: 0.00001s",
+              "height": "0.02r",
+              "width": "0.1r",
               "x": 0,
               "y": 0,
-              "column-padding": 0,
-              "columns": 1,
+              "font": "Jetbrains Mono",
+              "font-weight": "normal",
+              "font-size": "13",
+              "justify": "centre",
+              "colour": "#000000",
               "background-colour": "#D9D9D9",
-              "elements": [
-                {
-                  "type": "Text",
-                  "text": "Seed: 75893223479382",
-                  "height": "0.02r",
-                  "width": "0.2r",
-                  "x": 0,
-                  "y": 0,
-                  "font": "Jetbrains Mono",
-                  "font-weight": "normal",
-                  "font-size": "13",
-                  "justify": "centre",
-                  "colour": "#000000",
-                  "background-colour": "#D9D9D9",
-                  "tag": "SeedOut"
-                },
-                {
-                  "type": "Text",
-                  "text": "Runtime: ",
-                  "height": "0.02r",
-                  "width": "0.2r",
-                  "x": 0,
-                  "y": 0,
-                  "font": "Jetbrains Mono",
-                  "font-weight": "normal",
-                  "font-size": "13",
-                  "justify": "centre",
-                  "colour": "#000000",
-                  "background-colour": "#D9D9D9",
-                  "tag": "RuntimeOut"
-                }
-              ]
+              "tag": "RuntimeOut"
             },
-            "contentRight": null
+            "contentRight": {
+              "type": "Text",
+              "text": "Seed: ",
+              "height": "0.02r",
+              "width": "0.2r",
+              "x": 0,
+              "y": 0,
+              "font": "Jetbrains Mono",
+              "font-weight": "normal",
+              "font-size": "13",
+              "justify": "centre",
+              "colour": "#000000",
+              "background-colour": "#D9D9D9",
+              "tag": "SeedOut"
+            }
           }
         ]
       }

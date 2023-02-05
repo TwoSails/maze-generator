@@ -78,8 +78,8 @@ class Widget:
                                    relheight=self.height,
                                    relwidth=self.width)
 
-    def addRow(self, x: int = 0, y: int = 0, bg: Optional[str] = "") -> Row:
-        self.rows.append(Row(self.widgetFrame, self.geometry, x=x, y=y, bg=bg))
+    def addRow(self, x: int = 0, y: int = 0, bg: Optional[str] = "", **kwargs) -> Row:
+        self.rows.append(Row(self.widgetFrame, self.geometry, x=x, y=y, bg=bg, **kwargs))
         return self.rows[-1]
 
     def buildRows(self):
@@ -120,8 +120,10 @@ class Widget:
                       self.geometry,
                       x=NoneTypeCheck(style.get("x")),
                       y=NoneTypeCheck(style.get("y")),
-                      bg=NoneTypeCheck(style.get("background-colour"), None))
+                      bg=NoneTypeCheck(style.get("background-colour"), None),
+                      tag=NoneTypeCheck(style.get("tag"), ""))
             row = self.configureRow(row, style)
+            self.controller.addComponent(row.tag, row)
             return row
 
         if elementType == "Grid":
@@ -129,7 +131,8 @@ class Widget:
             for elementStyle in style["elements"]:
                 element = self.explore(elementStyle)
                 grid.addElement(element)
-
+                self.controller.addComponent(element.tag, element)
+            self.controller.addComponent(grid.tag, grid)
             return grid
 
         element = self.components[elementType]
@@ -151,8 +154,10 @@ class Widget:
             if elementType == "Row":
                 row = self.addRow(x=NoneTypeCheck(element.get("x"), 0),
                                   y=NoneTypeCheck(element.get("y"), 0),
-                                  bg=NoneTypeCheck(element.get("background-colour"), "#ffffff"))
+                                  bg=NoneTypeCheck(element.get("background-colour"), "#ffffff"),
+                                  tag=NoneTypeCheck(element.get("tag"), ""))
                 self.configureRow(row, element)
+                self.controller.addComponent(row.tag, row)
 
     def build(self):
         self.place()

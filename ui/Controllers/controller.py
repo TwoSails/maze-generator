@@ -7,7 +7,7 @@ from typing import List
 from mazeGenerator import App
 from mazeGenerator.controllers import ImageHandler
 from mazeGenerator.config import Config
-from ui.Components import Canvas
+from ui.Components import Canvas, Image
 
 
 logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.WARN,
@@ -104,6 +104,29 @@ class Controller:
         runtimeComponent = self.components["RuntimeOut"]
         runtimeComponent.update("")
 
+    def displayTiles(self, tiles):
+        abcTiles = filter(lambda i: False if i is None else "abc" in i, list(self.components.keys()))
+        abcTiles = list(abcTiles)
+        print(list(abcTiles))
+        overflow = 0
+
+        for idx, tile in enumerate(tiles.keys()):
+            if idx >= len(abcTiles) - 1:
+                overflow += int(tiles[tile])
+                continue
+            text = f"{tiles[tile]}x"
+            filename = f"./data/{self.tileSet}/{tile}.png"
+            component = self.components[f"abcTile{idx + 1}"]
+            component.update(text, filename)
+
+        for tile in range(len(tiles.keys()) + 1, len(abcTiles)):
+            self.components[f"abcTile{tile}"].update()
+
+        if overflow > 0:
+            self.components["abcTileOverflow"].update(text=f"{overflow}x", filename=f"./data/{self.tileSet}/icon.png")
+        else:
+            self.components["abcTileOverflow"].update()
+
     def generateMazes(self):
         threads = []
         for i, maze in enumerate(self.apps):
@@ -124,6 +147,7 @@ class Controller:
                 self.setRuntime(self.apps[i].runtime)
             else:
                 self.removeRuntime()
+            self.displayTiles(self.apps[i].countTiles())
 
     def button_run(self):
         self.apps = []
