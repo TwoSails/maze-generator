@@ -3,6 +3,7 @@ File: board.py
 Date Created: 19/11/22
 """
 import random
+import copy
 
 from mazeGenerator.config import Config
 from mazeGenerator.models import Tile, Cell
@@ -26,6 +27,8 @@ class Board:
         self.neighbourCache = {}
         self.collapsed = False
         self.seed = 0
+        self.logging = False
+        self.log = []
 
     def setWidth(self, widthInput: int) -> Response:
         if not isinstance(widthInput, int):
@@ -102,6 +105,9 @@ class Board:
             lowestCell = self.findLowestEntropy()
             if lowestCell.success:
                 lowestCell.data.collapse()
+
+            if self.logging:
+                self.log.append(copy.deepcopy(self.board))
 
         self.board[0].getEdge("pos-x")
 

@@ -21,6 +21,9 @@ class Image(Component):
         if self.filePath is not None:
             self.loadImage()
             self.setComponent()
+        self.command = NoneTypeCheck(style.get("command"), None)
+        if self.command is not None:
+            self.component.bind("<Button-1>", self.command)
 
     def setTextLabel(self):
         self.textLabel = Label(self.componentFrame,
@@ -51,11 +54,18 @@ class Image(Component):
         self.text = text,
         self.filePath = filename
 
-        if self.text is not None and self.textLabel is None:
-            self.setTextLabel()
-        self.textLabel.config(text=text)
+        if self.text != "":
+            if self.text is not None and self.textLabel is None:
+                self.setTextLabel()
+            self.textLabel.config(text=text)
         if filename == "":
             self.img = ""
         else:
             self.loadImage()
         self.component.config(image=self.img)
+
+    def border(self, border=None):
+        if border is None:
+            self.componentFrame.config(bg=self.backgroundColour)
+            return
+        self.componentFrame.config(bg=border, padx=3, pady=3)

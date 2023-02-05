@@ -18,6 +18,10 @@ class Canvas(Component):
         if self.data is not None and self.resolution > 0:
             self.drawImage(resolutionX=self.resolution[0], resolutionY=self.resolution[1], data=self.data)
         self.image = None
+        self.command = NoneTypeCheck(style.get("command"), None)
+        if self.command is not None:
+            self.component.bind("<Button-1>", self.command)
+        self.ratio = 0
 
     def setComponent(self):
         self.component: TkinterCanvas = TkinterCanvas(self.componentFrame,
@@ -53,9 +57,9 @@ class Canvas(Component):
 
     def displayImage(self, filePath):
         img = Image.open(filePath)
-        ratio = (img.size[0] / img.size[1])
-        img = img.resize((int(self.getAbsoluteWidth() if ratio > 1 else self.getAbsoluteWidth() * ratio),
-                          int(self.getAbsoluteHeight() if ratio < 1 else self.getAbsoluteHeight() / ratio)),
+        self.ratio = (img.size[0] / img.size[1])
+        img = img.resize((int(self.getAbsoluteWidth() if self.ratio > 1 else self.getAbsoluteWidth() * self.ratio),
+                          int(self.getAbsoluteHeight() if self.ratio < 1 else self.getAbsoluteHeight() / self.ratio)),
                          Image.NEAREST)
         self.image = ImageTk.PhotoImage(img)
         self.component.create_image(self.getAbsoluteWidth() / 2, self.getAbsoluteHeight() / 2, image=self.image)

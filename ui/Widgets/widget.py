@@ -140,6 +140,9 @@ class Widget:
         if elementType in ["Button", "ButtonInput"] and command is not None:
             command = getattr(self.controller, command)
             component = element(self.getRow(-1).rowFrame, style, self.geometry, command=command)
+        elif elementType in ["Canvas", "Image"] and command is not None:
+            style["command"] = getattr(self.controller, command)
+            component = element(self.getRow(-1).rowFrame, style, self.geometry)
         else:
             component = element(self.getRow(-1).rowFrame, style, self.geometry)
         self.controller.addComponent(component.tag, component)

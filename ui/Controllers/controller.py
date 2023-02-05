@@ -1,13 +1,15 @@
+import time
+from tkinter.filedialog import asksaveasfile
 import threading
 import logging
-from PIL import Image
-
+from io import BytesIO
+from PIL import Image as PillowImage
 from typing import List
 
 from mazeGenerator import App
 from mazeGenerator.controllers import ImageHandler
 from mazeGenerator.config import Config
-from ui.Components import Canvas, Image
+from ui.Components import Canvas
 
 
 logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.WARN,
@@ -29,6 +31,10 @@ class Controller:
         self.tileSet = "default"
         self.components = {}
         self.img = None
+        self.speed = 2
+        self.currentFrame = 0
+        self.play = False
+        self.currentGeneration = 0
 
     def addComponent(self, tag, component):
         self.components[tag] = component
@@ -38,7 +44,7 @@ class Controller:
     def convertBoardToCanvas(self, maze):
         outputDir = self.config.get("outputImgPath")
         filePath = f"{outputDir}maze_{maze}.png"
-        img = Image.open(filePath)
+        img = PillowImage.open(filePath)
         data = ""
         for pixel in img.getdata():
             data += f"{str(hex(pixel[0]))[2:].rjust(2, '0')}{str(hex(pixel[1]))[2:].rjust(2, '0')}{str(hex(pixel[2]))[2:].rjust(2, '0')}"
@@ -55,9 +61,9 @@ class Controller:
 
     def drawBoard(self, maze):
         outputDir = self.config.get("outputImgPath")
-        filePath = f"{outputDir}maze_{maze}.png"
+        self.img = f"{outputDir}maze_{maze}.png"
         canvas = self.getCanvas()
-        canvas.displayImage(filePath)
+        canvas.displayImage(self.img)
 
     def assign_fetch(self):
         pass
@@ -67,9 +73,46 @@ class Controller:
             if tag in self.fetch.keys():
                 self.fetch[tag] = self.inputData[tag]()
 
+    def generateFrame(self, board, boardIdx, index):
+        maze = self.apps[index]
+        img = ImageHandler(width=maze.board.width, height=maze.board.height,
+                           tileImageResolution=maze.tileImageResolution, tileResolution=maze.tileResolution,
+                           board=board, tileSetName=maze.tileSetName, seed=maze.board.seed, name=f"frames/maze_{boardIdx}")
+        img.SetTiles(maze.tileSet)
+        img.GenerateImage()
+
+    def generateAnimation(self, index):
+        threads = []
+        for boardIdx, board in enumerate(self.apps[index].board.log):
+            thread = threading.Thread(target=self.generateFrame, args=(board, boardIdx, index, ))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+    def displayAnimation(self, index):
+        canvas = self.getCanvas()
+        progresBar = self.components["AnimationProgressBar"]
+        progressText = self.components["AnimationProgressText"]
+        if not canvas:
+            return
+        outputDir = f"{self.config.get('outputImgPath')}frames/maze_"
+        length = len(self.apps[index].board.log)
+        while self.currentFrame < length and self.play:
+            canvas.displayImage(outputDir + f"{self.currentFrame}.png")
+            canvas.component.update()
+            self.currentFrame += 1
+            progress = int(self.currentFrame/length * 100)
+            progresBar.set(progress)
+            progressText.update(f"{progress}%")
+            time.sleep(0.2 / self.speed)
+
     def generateMaze(self, index):
         maze = self.apps[index]
-        resApp = maze.run()
+        if maze.board.width * maze.board.height > 600 or self.fetch["GenerationsInt"] > 1:
+            self.fetch["LogBool"] = False
+        resApp = maze.run(self.fetch["LogBool"])
         img = ImageHandler(width=maze.board.width, height=maze.board.height,
                            tileImageResolution=maze.tileImageResolution, tileResolution=maze.tileResolution,
                            board=resApp.data, tileSetName=maze.tileSetName, seed=maze.board.seed, name=f"maze_{index}")
@@ -107,7 +150,6 @@ class Controller:
     def displayTiles(self, tiles):
         abcTiles = filter(lambda i: False if i is None else "abc" in i, list(self.components.keys()))
         abcTiles = list(abcTiles)
-        print(list(abcTiles))
         overflow = 0
 
         for idx, tile in enumerate(tiles.keys()):
@@ -148,8 +190,12 @@ class Controller:
             else:
                 self.removeRuntime()
             self.displayTiles(self.apps[i].countTiles())
+            if self.fetch["LogBool"]:
+                self.generateAnimation(i)
+            self.currentGeneration = i
 
     def button_run(self):
+        self.currentFrame = 0
         self.apps = []
         self.gather_data()
         for generation in range(self.fetch["GenerationsInt"]):
@@ -160,11 +206,54 @@ class Controller:
                                      seed=self.fetch["SeedStr"])
             self.generateMazes()
 
-    def button_downloadPDF(self):
-        pass
+    def button_downloadPDF(self, *_):
+        file = asksaveasfile(mode="wb", defaultextension=".pdf")
+        if file is None:
+            return
 
-    def button_downloadPNG(self):
-        pass
+        io = BytesIO()
+        img = PillowImage.open(self.img).convert("RGB")
+        img = img.resize((img.size[0] * 50, img.size[1] * 50), PillowImage.NEAREST)
+        img.save(io, "PDF")
+        img.seek(0)
+        file.write(io.getbuffer())
+        file.close()
 
-    def button_pausePlay(self):
-        pass
+    def button_downloadPNG(self, *_):
+        file = asksaveasfile(mode="wb", defaultextension=".png")
+        if file is None:
+            return
+
+        io = BytesIO()
+        img = PillowImage.open(self.img)
+        img = img.resize((img.size[0] * 100, img.size[1] * 100), PillowImage.NEAREST)
+        img.save(io, "PNG")
+        img.seek(0)
+        file.write(io.getbuffer())
+        file.close()
+
+    def button_playPause(self, *_):
+        self.play = not self.play
+        button = self.components["PlayPauseButton"]
+        button.update(filename=f"./ui/Config/data/{'pause' if self.play else 'play'}Button.png")
+        if len(self.apps) == 0:
+            return
+
+        if self.currentFrame == len(self.apps[self.currentGeneration].board.log):
+            self.currentFrame = 0
+
+        if self.play:
+            self.displayAnimation(self.currentGeneration)
+
+    def canvas_select(self, pos):
+        canvas = self.components["Canvas"]
+        widthOfCells = canvas.getAbsoluteWidth() / self.apps[self.currentGeneration].board.width
+        heightOfCells = canvas.getAbsoluteHeight() / self.apps[self.currentGeneration].board.height
+        row = int(pos.y / heightOfCells)
+        col = int(pos.x / widthOfCells)
+        idx = row * self.apps[self.currentGeneration].board.width + col
+        if self.fetch["LogBool"]:
+            cell = self.apps[self.currentGeneration].board.log[self.currentFrame - 1][idx]
+        else:
+            cell = self.apps[self.currentGeneration].board.board[idx]
+        print(cell)

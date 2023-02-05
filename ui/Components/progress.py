@@ -49,5 +49,9 @@ class Progress(Component):
         self.value = min([self.value, 100])
         self.drawLine()
 
+    def set(self, value):
+        self.value = value
+        self.drawLine()
+
     def get(self):
         return self.value

@@ -23,6 +23,7 @@ class App:
         self.tileResolution = 0
         self.tileImageResolution = 0
         self.runtime = 0
+        self.logs = []
 
     def loadTileSet(self, tileSet, transform: bool = True) -> Response:
         """
@@ -89,11 +90,13 @@ class App:
         self.board.setSeed(seed)
         self.board.generateBoard()
 
-    def run(self) -> Response:
+    def run(self, log=False) -> Response:
         """
         Performs collapse
         :return: Cell Board | InvalidState
         """
+        if log:
+            self.board.logging = True
         start_time = perf_counter()
         self.board.performCollapse()
         end_time = perf_counter()
