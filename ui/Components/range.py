@@ -14,12 +14,15 @@ class Range(Component):
         self.end = NoneTypeCheck(style.get("end"), 10)
         self.defaultValue = NoneTypeCheck(style.get("default"), 1)
         self.value = DoubleVar()
+        self.fetchData = self.get
+        self.setComponent()
+
+    def setComponent(self):
         self.component = Scale(self.componentFrame,
                                from_=self.start,
                                to=self.end,
                                variable=self.value,
                                value=self.defaultValue)
-        self.fetchData = self.get
 
     def get(self):
         return self.value.get()

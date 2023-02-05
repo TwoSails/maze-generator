@@ -11,17 +11,20 @@ from ui.Components import Component
 class Canvas(Component):
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
-        self.component: TkinterCanvas = TkinterCanvas(self.componentFrame,
-                                                      height=self.getAbsoluteHeight(),
-                                                      width=self.getAbsoluteWidth(),
-                                                      highlightbackground=self.backgroundColour,
-                                                      highlightthickness=0)
+        self.setComponent()
         self.data = NoneTypeCheck(style.get("data"), None)
         self.pixelsArr = []
         self.resolution = NoneTypeCheck(style.get("resolution"), [0, 0])
         if self.data is not None and self.resolution > 0:
             self.drawImage(resolutionX=self.resolution[0], resolutionY=self.resolution[1], data=self.data)
         self.image = None
+
+    def setComponent(self):
+        self.component: TkinterCanvas = TkinterCanvas(self.componentFrame,
+                                                      height=self.getAbsoluteHeight(),
+                                                      width=self.getAbsoluteWidth(),
+                                                      highlightbackground=self.backgroundColour,
+                                                      highlightthickness=0)
 
     def clearCanvas(self):
         self.component.delete("all")
@@ -33,8 +36,7 @@ class Canvas(Component):
         scaleY = int(self.getAbsoluteHeight() / max(resolutionX, resolutionY))
         self.component.create_rectangle(row * scaleX, col * scaleY,
                                         row * scaleX + scaleX, col * scaleY + scaleY,
-                                        fill=f"#{colour.strip('#')}",
-                                        borderWi=None)
+                                        fill=f"#{colour.strip('#')}")
         self.component.update()
 
     def drawImage(self, resolutionX: int, resolutionY: int, data: str):

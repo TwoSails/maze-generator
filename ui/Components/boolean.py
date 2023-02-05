@@ -14,6 +14,9 @@ class BooleanInput(Component):
         self.component: Optional[ttk.Checkbutton] = None
         self.text = NoneTypeCheck(style.get("text"), "Boolean")
         self.fetchData = self.get
+        self.setComponent()
+
+    def setComponent(self):
         self.component = ttk.Checkbutton(self.componentFrame, text=self.text,
                                          variable=self.state)
 

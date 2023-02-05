@@ -16,22 +16,46 @@ class Image(Component):
         self.textColour = NoneTypeCheck(style.get("colour"), "#ffffff")
         self.justify = NoneTypeCheck(style.get("justify"), "w")
         self.anchoring = lambda x: "w" if x == "left" else "e" if x == "right" else "center"
+        self.textLabel = None
+        self.img = None
         if self.filePath is not None:
-            img = PillowImage.open(self.filePath)
-            img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.NEAREST)
-            img = ImageTk.PhotoImage(img)
-            self.component = Label(self.componentFrame, image=img,
-                                   bg=self.backgroundColour,
-                                   highlightbackground=self.backgroundColour,
-                                   highlightthickness=0)
-            self.component.image = img
-            if self.text is not None:
-                self.textLabel = Label(self.componentFrame,
-                                       text=self.text,
-                                       font=(NoneTypeCheck(style.get("font"), ""),
-                                             NoneTypeCheck(style.get("font-size"), 20),
-                                             NoneTypeCheck(style.get("font-weight"), "")),
-                                       fg=self.textColour,
-                                       bg=self.backgroundColour,
-                                       anchor=self.anchoring(self.justify)
-                                       )
+            self.loadImage()
+            self.setComponent()
+
+    def setTextLabel(self):
+        self.textLabel = Label(self.componentFrame,
+                               text=self.text,
+                               font=(NoneTypeCheck(self.style.get("font"), ""),
+                                     NoneTypeCheck(self.style.get("font-size"), 18),
+                                     NoneTypeCheck(self.style.get("font-weight"), "")),
+                               fg=self.textColour,
+                               bg=self.backgroundColour,
+                               anchor=self.anchoring(self.justify)
+                               )
+
+    def loadImage(self):
+        img = PillowImage.open(self.filePath)
+        img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.NEAREST)
+        self.img = ImageTk.PhotoImage(img)
+
+    def setComponent(self):
+        self.component = Label(self.componentFrame, image=self.img,
+                               bg=self.backgroundColour,
+                               highlightbackground=self.backgroundColour,
+                               highlightthickness=0)
+        self.component.image = self.img
+        if self.text is not None:
+            self.setTextLabel()
+
+    def update(self, text="", filename=""):
+        self.text = text,
+        self.filePath = filename
+
+        if self.text is not None and self.textLabel is None:
+            self.setTextLabel()
+        self.textLabel.config(text=text)
+        if filename == "":
+            self.img = ""
+        else:
+            self.loadImage()
+        self.component.config(image=self.img)

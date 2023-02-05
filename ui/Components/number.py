@@ -14,6 +14,9 @@ class NumberInput(Component):
         self.toVal = NoneTypeCheck(style.get("to"), 50)
         self.value = NoneTypeCheck(style.get("default"), 5)
         self.fetchData = self.get
+        self.setComponent()
+
+    def setComponent(self):
         self.component = ttk.Spinbox(self.componentFrame, from_=self.fromVal, to=self.toVal)
         self.component.insert(INSERT, self.value)
 

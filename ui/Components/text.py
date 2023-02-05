@@ -13,11 +13,14 @@ class Text(Component):
         self.textColour = NoneTypeCheck(style.get("colour"), "#ffffff")
         self.justify = NoneTypeCheck(style.get("justify"), "w")
         self.anchoring = lambda x: "w" if x == "left" else "e" if x == "right" else "center"
+        self.setComponent()
+
+    def setComponent(self):
         self.component = Label(self.componentFrame,
                                text=self.text,
-                               font=(NoneTypeCheck(style.get("font"), ""),
-                                     NoneTypeCheck(style.get("font-size"), 20),
-                                     NoneTypeCheck(style.get("font-weight"), "")),
+                               font=(NoneTypeCheck(self.style.get("font"), ""),
+                                     NoneTypeCheck(self.style.get("font-size"), 20),
+                                     NoneTypeCheck(self.style.get("font-weight"), "")),
                                fg=self.textColour,
                                bg=self.backgroundColour,
                                anchor=self.anchoring(self.justify)

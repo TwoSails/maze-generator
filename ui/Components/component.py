@@ -1,7 +1,7 @@
 from tkinter import Frame
-from tkinter import ttk
 
 from typing import Dict, Tuple, List, Optional
+from abc import abstractmethod
 
 from ui.misc import NoneTypeCheck
 
@@ -28,6 +28,18 @@ class Component:
         self.active = False
         self.fetchData = None
         self.build()
+
+    def setParentFrame(self, parent):
+        self.parentFrame = parent
+        self.componentFrame = Frame(self.parentFrame,
+                                    height=self.getAbsoluteHeight(),
+                                    width=self.getAbsoluteWidth(),
+                                    bg=self.backgroundColour)
+        self.setComponent()
+
+    @abstractmethod
+    def setComponent(self):
+        pass
 
     def getAbsoluteWidth(self):
         width: str | float = self.width
@@ -67,8 +79,10 @@ class Component:
     def getRelativeY(self):
         return self.getAbsoluteY() / self.geometry[1]
 
-    def build(self, alignment: Optional[int] = None, drop: Optional[bool] = False, coords=[]):
+    def build(self, alignment: Optional[int] = None, drop: Optional[bool] = False, coords=None):
         # print(f"Building {self.style.get('type')} Component")
+        if coords is None:
+            coords = []
         if self.component is None:
             return False
 

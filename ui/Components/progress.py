@@ -9,11 +9,7 @@ from ui.Components import Component
 class Progress(Component):
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
-        self.component: Canvas = Canvas(self.componentFrame, width=self.getAbsoluteWidth(),
-                                        height=self.getAbsoluteHeight(),
-                                        highlightbackground=self.backgroundColour,
-                                        highlightthickness=0,
-                                        bg=self.backgroundColour)
+        self.setComponent()
         self.colour = NoneTypeCheck(style.get("line-colour"), "cyan")
         self.completeColour = NoneTypeCheck(style.get("backing-colour"), "#555555")
         self.value = NoneTypeCheck(style.get("default"), 50)
@@ -21,6 +17,13 @@ class Progress(Component):
         self.initCanvas()
         self.drawLine()
 
+    def setComponent(self):
+        self.component: Canvas = Canvas(self.componentFrame, width=self.getAbsoluteWidth(),
+                                        height=self.getAbsoluteHeight(),
+                                        highlightbackground=self.backgroundColour,
+                                        highlightthickness=0,
+                                        bg=self.backgroundColour)
+        
     def initCanvas(self):
         self.component.delete("all")
         self.component.create_line(self.getAbsoluteHeight() / 2 - 1,

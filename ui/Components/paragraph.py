@@ -10,10 +10,13 @@ from ui.Components import Component
 class Paragraph(Component):
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
+        self.setComponent()
+
+    def setComponent(self):
         self.component = ScrolledText(self.componentFrame,
-                                      font=(NoneTypeCheck(style.get("font"), ""),
-                                            NoneTypeCheck(style.get("font-size"), 20),
-                                            NoneTypeCheck(style.get("font-weight"), "")),
+                                      font=(NoneTypeCheck(self.style.get("font"), ""),
+                                            NoneTypeCheck(self.style.get("font-weight"), ""),
+                                            NoneTypeCheck(self.style.get("font-size"), 20)),
                                       width=self.getAbsoluteWidth(),
                                       height=self.getAbsoluteHeight())
 
