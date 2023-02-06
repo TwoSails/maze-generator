@@ -16,6 +16,9 @@ class Progress(Component):
         self.fetchData = self.get
         self.initCanvas()
         self.drawLine()
+        self.command = NoneTypeCheck(style.get("command"), None)
+        if self.command is not None:
+            self.component.bind("<Button-1>", self.command)
 
     def setComponent(self):
         self.component: Canvas = Canvas(self.componentFrame, width=self.getAbsoluteWidth(),

@@ -15,7 +15,7 @@ class View(Tk):
         self.wm_geometry(f"{self.geometryDimensions[0]}x{self.geometryDimensions[1]}")
         self.wm_resizable(0, 0)
         self.widgets = {}
-        self.controller = Controller()
+        self.controller = Controller(self)
         self.contentFrame = Frame(self, bg="#ff0000")
         self.contentFrame.pack(fill="both", expand=True)
         self.windows: Dict[str, Window] = {}

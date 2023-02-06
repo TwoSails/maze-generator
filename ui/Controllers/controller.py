@@ -17,7 +17,8 @@ logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.WARN,
 
 
 class Controller:
-    def __init__(self):
+    def __init__(self, window=None):
+        self.windowManager = window
         self.apps: List[App] = []
         self.inputData = {}
         self.config = Config()
@@ -93,7 +94,7 @@ class Controller:
 
     def displayAnimation(self, index):
         canvas = self.getCanvas()
-        progresBar = self.components["AnimationProgressBar"]
+        progressBar = self.components["AnimationProgressBar"]
         progressText = self.components["AnimationProgressText"]
         if not canvas:
             return
@@ -104,7 +105,7 @@ class Controller:
             canvas.component.update()
             self.currentFrame += 1
             progress = int(self.currentFrame/length * 100)
-            progresBar.set(progress)
+            progressBar.set(progress)
             progressText.update(f"{progress}%")
             time.sleep(0.2 / self.speed)
 
@@ -257,3 +258,10 @@ class Controller:
         else:
             cell = self.apps[self.currentGeneration].board.board[idx]
         print(cell)
+
+    def progress_speed(self, pos):
+        control = self.components["AnimationSpeedControl"]
+        percentage = pos.x / control.getAbsoluteWidth()
+        percentage = int(percentage * 100)
+        control.set(percentage)
+        self.speed = percentage / 25

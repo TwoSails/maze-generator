@@ -23,11 +23,18 @@ class Window:
                 widgets = window["widgets"]
 
         for widget in widgets:
+            shared = self.settings["widgets"].get(widget).get("shared")
+            if shared is None:
+                shared = []
+            elementWindows = self.settings["widgets"].get(widget).get("elements").keys()
+            name = self.name
+            if self.name in shared:
+                name = list(filter(lambda x: x in elementWindows, shared))[0]
             self.widgets[widget] = Widget(self.contentFrame,
                                           self.settings["widgets"].get(widget),
                                           self.geometry,
                                           controller=self.controller)
-            self.widgets[widget].display(window=self.name)
+            self.widgets[widget].display(window=name)
             self.widgets[widget].buildRows()
 
     def build(self):

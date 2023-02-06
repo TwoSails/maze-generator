@@ -6,6 +6,13 @@
         "Sidebar",
         "Board"
       ]
+    },
+    {
+      "name": "cell",
+      "widgets": [
+        "Sidebar",
+        "Board"
+      ]
     }
   ],
   "title": "Wave Function Collapse",
@@ -371,7 +378,7 @@
             "contentRight": null
           }
         ],
-        "analysis": [ ]
+        "cell": [ ]
       }
     },
     "Board": {
@@ -383,8 +390,10 @@
       "absoluteDimensions": false,
       "background-colour": "#D9D9D9",
       "windows": [
-        "main"
+        "main",
+        "cell"
       ],
+      "shared": ["main", "cell"],
       "elements": {
         "main": [
           {
@@ -425,11 +434,13 @@
                   "default": 25,
                   "line-colour": "#ffffff",
                   "backing-colour": "#000000",
-                  "background-colour": "#D9D9D9"
+                  "background-colour": "#D9D9D9",
+                  "tag": "AnimationSpeedControl",
+                  "command": "progress_speed"
                 },
                 {
                   "type": "Text",
-                  "text": "2x",
+                  "text": "4x",
                   "height": 15,
                   "width": 50,
                   "x": 0,
