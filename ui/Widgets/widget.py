@@ -140,7 +140,7 @@ class Widget:
         if elementType in ["Button", "ButtonInput"] and command is not None:
             command = getattr(self.controller, command)
             component = element(self.getRow(-1).rowFrame, style, self.geometry, command=command)
-        elif command is not None:
+        elif command is not None and isinstance(command, str):
             style["command"] = getattr(self.controller, command)
             component = element(self.getRow(-1).rowFrame, style, self.geometry)
         else:

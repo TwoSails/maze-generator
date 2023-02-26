@@ -1,5 +1,5 @@
 from tkinter import Frame
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from ui.Widgets import Widget
 from ui.Controllers import Controller
@@ -15,6 +15,8 @@ class Window:
         self.contentFrame = Frame(self.parentFrame)
         self.contentFrame.pack(fill="both", expand=True)
         self.widgets: Dict[str, Widget] = {}
+        self.injectedStyle = None
+        self.injectedWidget = None
 
     def loadContent(self):
         widgets = []
@@ -37,7 +39,14 @@ class Window:
             self.widgets[widget].display(window=name)
             self.widgets[widget].buildRows()
 
-    def build(self):
+    def build(self, injectStyle=None, injectWidget=None):
+        if injectWidget is not None:
+            widgetSettings: Dict[str, Any] = self.settings["widgets"].get(injectWidget)
+            elements = widgetSettings.get("elements").get(self.name)
+            if elements is not None:
+                elements.append(injectStyle)
+                self.injectedWidget = injectWidget
+                self.injectedStyle = injectStyle
         self.contentFrame.pack(fill="both", expand=True)
         self.loadContent()
         for widget in self.widgets.values():
@@ -45,5 +54,14 @@ class Window:
         print("Building...")
 
     def destroy(self):
+        if self.injectedStyle is not None and self.injectedWidget is not None:
+            elements = self.settings["widgets"].get(self.injectedWidget).get("elements").get(self.name)
+            if self.injectedStyle in elements:
+                idx = elements.index(self.injectedStyle)
+                if idx is not None:
+                    elements.pop(idx)
+                    print("Removed injected style")
+                    # Has to remove injected style as it will remain after destruction in widget settings
+
         self.contentFrame.destroy()
         self.contentFrame = Frame(self.parentFrame)

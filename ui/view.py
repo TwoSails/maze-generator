@@ -13,7 +13,7 @@ class View(Tk):
         self.wm_title(self.__config.config.get("title"))
         self.geometryDimensions = [min([1440, self.winfo_screenwidth()]), min([1024, self.winfo_screenheight() - 100])]
         self.wm_geometry(f"{self.geometryDimensions[0]}x{self.geometryDimensions[1]}")
-        self.wm_resizable(0, 0)
+        self.wm_resizable(False, False)
         self.widgets = {}
         self.controller = Controller(self)
         self.contentFrame = Frame(self, bg="#ff0000")
@@ -22,6 +22,9 @@ class View(Tk):
         self.makeWindows()
 
     def makeWindows(self):
+        """
+        Creates windows object and passes through settings and controller
+        """
         settings = self.__config.config
         for window in settings["windows"]:
             self.windows[window["name"]] = Window(self.contentFrame,
@@ -30,11 +33,19 @@ class View(Tk):
                                                   self.geometryDimensions,
                                                   controller=self.controller)
 
-    def displayWindow(self, name):
+    def displayWindow(self, name, injectStyle=None, injectWidget=None):
+        """
+        Injecting style and widget are used to add elements to a widget during the execution of the program
+        This is used to render complex grid information for the Sidebar{cell} widget
+        :param name:
+        :param injectStyle:
+        :param injectWidget:
+        :return:
+        """
         if name not in self.windows.keys():
             return
 
         for window in self.windows.keys():
             self.windows[window].destroy()
 
-        self.windows[name].build()
+        self.windows[name].build(injectStyle=injectStyle, injectWidget=injectWidget)

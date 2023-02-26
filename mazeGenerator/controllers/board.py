@@ -3,7 +3,7 @@ File: board.py
 Date Created: 19/11/22
 """
 import random
-import copy
+import pickle
 
 from mazeGenerator.config import Config
 from mazeGenerator.models import Tile, Cell
@@ -107,7 +107,11 @@ class Board:
                 lowestCell.data.collapse()
 
             if self.logging:
-                self.log.append(copy.deepcopy(self.board))
+                # That's one way to make it thread safe i guess...
+                # Issue was caused by deepcopy due to lack of thread safety in method
+                # Deepcopy therefore caused the program to become unresponsive
+                self.log = self.log[:] + [pickle.loads(pickle.dumps(self.board))]
+                # self.log.append(pickle.loads(pickle.dumps(self.board)))
 
         self.board[0].getEdge("pos-x")
 
