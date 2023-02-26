@@ -22,6 +22,7 @@ class Canvas(Component):
         if self.command is not None:
             self.component.bind("<Button-1>", self.command)
         self.ratio = 0
+        self.generationImages = []
 
     def setComponent(self):
         self.component: TkinterCanvas = TkinterCanvas(self.componentFrame,
@@ -34,6 +35,14 @@ class Canvas(Component):
         self.component.delete("all")
 
     def pixel(self, row: int, col: int, resolutionX: int, resolutionY: int, colour: str):
+        """
+        Draws a single pixel square on canvas
+        :param row: row
+        :param col: col
+        :param resolutionX: x-axis resolution
+        :param resolutionY: y-axis resolution
+        :param colour: hex colour string
+        """
         if len(colour) != 6:
             return
         scaleX = int(self.getAbsoluteWidth() / max(resolutionX, resolutionY))
@@ -44,6 +53,12 @@ class Canvas(Component):
         self.component.update()
 
     def drawImage(self, resolutionX: int, resolutionY: int, data: str):
+        """
+        Pixel drawing of an image
+        :param resolutionX: pixel count in x-axis
+        :param resolutionY: pixel count in y-axis
+        :param data: string of hex values corresponding to pixel
+        """
         self.pixelsArr = []
         self.resolution = [resolutionX, resolutionY]
         for index in range(resolutionX * resolutionY):
@@ -56,13 +71,42 @@ class Canvas(Component):
                        colour=colour)
 
     def displayImage(self, filePath):
+        """
+        Places an image on the canvas
+        :param filePath: Path to image
+        """
+        width = self.getAbsoluteWidth()
         img = Image.open(filePath)
         self.ratio = (img.size[0] / img.size[1])
-        img = img.resize((int(self.getAbsoluteWidth() if self.ratio > 1 else self.getAbsoluteWidth() * self.ratio),
+        self.component.configure(width=width)
+        img = img.resize((int(width if self.ratio > 1 else width * self.ratio),
                           int(self.getAbsoluteHeight() if self.ratio < 1 else self.getAbsoluteHeight() / self.ratio)),
                          Image.NEAREST)
         self.image = ImageTk.PhotoImage(img)
         self.component.create_image(self.getAbsoluteWidth() / 2, self.getAbsoluteHeight() / 2, image=self.image)
+
+    def displayQuarterImage(self, filePath, quarter: int):
+        """
+        Displays an image in a quarter of the canvas area
+        :param filePath: path to image
+        :param quarter: 0 to 3 which quarter of canvas
+        """
+        img = Image.open(filePath)
+        ratio = (img.size[0] / img.size[1])
+        col = 3 if quarter // 2 == 1 else 1
+        row = 3 if quarter % 2 == 1 else 1
+        width = self.getAbsoluteWidth() / 2
+        height = self.getAbsoluteHeight() / 2
+        img = img.resize((int(width if ratio > 1 else width * ratio),
+                          int(height if ratio < 1 else height / ratio)),
+                         Image.NEAREST)
+        if len(self.generationImages) > quarter:
+            self.generationImages[quarter] = ImageTk.PhotoImage(img)
+        else:
+            self.generationImages.append(ImageTk.PhotoImage(img))
+        self.component.create_image(self.getAbsoluteWidth() / 4 * row,
+                                    self.getAbsoluteHeight() / 4 * col,
+                                    image=self.generationImages[quarter])
 
     def updateImage(self, resolutionX: int, resolutionY: int, data: str):  # Canvas efficiency
         if [resolutionX, resolutionY] != self.resolution:  # Different resolutions will be different pixel locations
@@ -80,3 +124,6 @@ class Canvas(Component):
                            resolutionX=resolutionX,
                            resolutionY=resolutionY,
                            colour=colour)
+
+    def drawRect(self, x1, y1, x2, y2, *_):
+        self.component.create_rectangle(x1, y1, x2, y2, outline="#B7F42B", width=2)

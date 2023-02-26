@@ -15,6 +15,7 @@ class Image(Component):
         self.text = NoneTypeCheck(style.get("text"), None)
         self.textColour = NoneTypeCheck(style.get("colour"), "#ffffff")
         self.justify = NoneTypeCheck(style.get("justify"), "w")
+        self.transformation = NoneTypeCheck(style.get("transformation"), None)
         self.anchoring = lambda x: "w" if x == "left" else "e" if x == "right" else "center"
         self.textLabel = None
         self.img = None
@@ -39,6 +40,20 @@ class Image(Component):
     def loadImage(self):
         img = PillowImage.open(self.filePath)
         img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.NEAREST)
+        if self.transformation is not None:
+            match self.transformation:
+                case "Rotation.one":
+                    img = img.transpose(PillowImage.Transpose.ROTATE_90)
+                case "Rotation.two":
+                    img = img.transpose(PillowImage.Transpose.ROTATE_180)
+                case "Rotation.three":
+                    img = img.transpose(PillowImage.Transpose.ROTATE_270)
+                case "Axis.X":
+                    img = img.transpose(PillowImage.Transpose.FLIP_TOP_BOTTOM)
+                case "Axis.Y":
+                    img = img.transpose(PillowImage.Transpose.FLIP_LEFT_RIGHT)
+                case _:
+                    img = img
         self.img = ImageTk.PhotoImage(img)
 
     def setComponent(self):
@@ -66,6 +81,6 @@ class Image(Component):
 
     def border(self, border=None):
         if border is None:
-            self.componentFrame.config(bg=self.backgroundColour)
+            self.componentFrame.config(bg=self.backgroundColour, padx=0, pady=0)
             return
         self.componentFrame.config(bg=border, padx=3, pady=3)
