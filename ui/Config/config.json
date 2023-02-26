@@ -150,7 +150,7 @@
             "contentRight": {
               "type": "NumberInput",
               "from": 1,
-              "to": 10,
+              "to": 4,
               "height": 40,
               "default": 1,
               "width": "0.07r",
@@ -168,7 +168,7 @@
             "y": 320,
             "contentLeft": {
               "type": "Text",
-              "text": "The app can generate 1 - 10 mazes",
+              "text": "The app can generate 1 - 4 mazes",
               "height": 20,
               "width": "0.25r",
               "x": 0,
@@ -247,8 +247,9 @@
                   "width": 70,
                   "x": "0.05r",
                   "y": 0,
-                  "filename": "./data/default/01.png",
-                  "background-colour": "#333333"
+                  "filename": "./ui/Config/data/addTileSetButton.png",
+                  "background-colour": "#333333",
+                    "command": "button_add_tileset"
                 },
                 {
                   "type": "Image",
@@ -256,8 +257,10 @@
                   "width": 70,
                   "x": "0.05r",
                   "y": 0,
-                  "filename": "./data/default/02.png",
-                  "background-colour": "#333333"
+                  "filename": "./data/default/icon.png",
+                  "background-colour": "#333333",
+                    "tag": "primaryTileSet",
+                    "command": "button_primaryTileSet"
                 },
                 {
                   "type": "Image",
@@ -265,40 +268,35 @@
                   "width": 70,
                   "x": "0.05r",
                   "y": 0,
-                  "filename": "./data/default/03.png",
-                  "background-colour": "#333333"
-                },
-                {
-                  "type": "Image",
-                  "height": 70,
-                  "width": 70,
-                  "x": "0.05r",
-                  "y": 0,
-                  "filename": "./data/default/04.png",
-                  "background-colour": "#333333"
-                },
-                {
-                  "type": "Image",
-                  "height": 70,
-                  "width": 70,
-                  "x": "0.05r",
-                  "y": 0,
-                  "filename": "./data/default/05.png",
-                  "background-colour": "#333333"
-                },
-                {
-                  "type": "Image",
-                  "height": 70,
-                  "width": 70,
-                  "x": "0.05r",
-                  "y": 0,
-                  "filename": "./data/default/06.png",
-                  "background-colour": "#333333"
+                  "filename": "./data/default/icon.png",
+                  "background-colour": "#333333",
+                    "tag": "secondaryTileSet",
+                    "command": "button_secondaryTileSet"
                 }
               ]
             },
             "contentRight": null
           },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 610,
+                "contentLeft": {
+                    "type": "BooleanInput",
+                    "text": "Graph (For mazes < 600 cells)",
+                    "height": 20,
+                    "width": "0.15r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Open Sans",
+                    "font-weight": "normal",
+                    "font-size": "14",
+                    "justify": "centre",
+                    "background-colour": "#333333",
+                    "tag": "GraphBool"
+                },
+                "contentRight": null
+            },
           {
             "type": "Row",
             "x": 0,
@@ -378,7 +376,358 @@
             "contentRight": null
           }
         ],
-        "cell": [ ]
+        "cell": [
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 10,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Cell Analysis",
+              "height": 50,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "bold",
+              "font-size": "36",
+              "justify": "centre"
+            },
+            "contentRight": null
+          },
+            {
+            "type": "Row",
+            "x": "0.05r",
+            "y": 70,
+            "background-colour": "#333333",
+            "contentLeft": {
+              "type": "ButtonInput",
+              "text": "Back",
+              "height": 40,
+              "width": "0.225r",
+              "x": 0,
+              "y": 0,
+              "background-colour": "#333333",
+              "tag": "CellBackButton",
+              "command": "button_back"
+            },
+                "contentRight": null
+            },
+            {
+                "type": "Row",
+                "x": "0.05r",
+                "y": 100,
+                "background-colour": "#333333",
+                "contentLeft": {
+                    "type": "ButtonInput",
+                    "text": "Graph",
+                    "height": 40,
+                    "width": "0.110r",
+                    "x": 0,
+                    "y": 0,
+                    "background-colour": "#333333",
+                    "tag": "CellBackButton",
+                    "command": "button_graph"
+                },
+                "contentRight": {
+                    "type": "ButtonInput",
+                    "text": "Save Graph",
+                    "height": 40,
+                    "width": "0.110r",
+                    "x": 0,
+                    "y": 0,
+                    "background-colour": "#333333",
+                    "tag": "CellGraphButton",
+                    "command": "button_graph_save"
+                }
+            },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 150,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Name",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "bold",
+              "font-size": "16",
+              "justify": "left",
+              "background-colour": "#333333"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 180,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "03",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Courier New",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "left",
+              "background-colour": "#333333",
+              "tag": "CellName"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 210,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Transformation",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "bold",
+              "font-size": "16",
+              "justify": "left",
+              "background-colour": "#333333"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 240,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Rotation.one",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Courier New",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "left",
+              "background-colour": "#333333",
+              "tag": "CellTransformation"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 270,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Resolution",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "bold",
+              "font-size": "16",
+              "justify": "left",
+              "background-colour": "#333333"
+            }
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 300,
+            "background-colour": "#333333",
+            "contentRight": null,
+            "contentLeft": {
+              "type": "Text",
+              "text": "3px",
+              "height": 20,
+              "width": "0.25r",
+              "x": "0.05r",
+              "y": 0,
+              "font": "Courier New",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "left",
+              "background-colour": "#333333",
+              "tag": "CellResolution"
+            }
+          },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 330,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Location",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Open Sans",
+                    "font-weight": "bold",
+                    "font-size": "16",
+                    "justify": "left",
+                    "background-colour": "#333333"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 360,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Row 0 / Col 0 - Index 0",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Courier New",
+                    "font-weight": "normal",
+                    "font-size": "14",
+                    "justify": "left",
+                    "background-colour": "#333333",
+                    "tag": "CellLocation"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 390,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Entropy",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Open Sans",
+                    "font-weight": "bold",
+                    "font-size": "16",
+                    "justify": "left",
+                    "background-colour": "#333333"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 420,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "1",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Courier New",
+                    "font-weight": "normal",
+                    "font-size": "14",
+                    "justify": "left",
+                    "background-colour": "#333333",
+                    "tag": "CellEntropy"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 450,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Collapsed",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Open Sans",
+                    "font-weight": "bold",
+                    "font-size": "16",
+                    "justify": "left",
+                    "background-colour": "#333333"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 470,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "False",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Courier New",
+                    "font-weight": "normal",
+                    "font-size": "14",
+                    "justify": "left",
+                    "background-colour": "#333333",
+                    "tag": "CellCollapsed"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 500,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Available Tiles",
+                    "height": 20,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Open Sans",
+                    "font-weight": "bold",
+                    "font-size": "16",
+                    "justify": "left",
+                    "background-colour": "#333333"
+                }
+            },
+            {
+                "type": "Row",
+                "x": 0,
+                "y": 530,
+                "background-colour": "#333333",
+                "contentRight": null,
+                "contentLeft": {
+                    "type": "Text",
+                    "text": "Neighbouring cells of newly placed\ntiles may not have been updated",
+                    "height": 30,
+                    "width": "0.25r",
+                    "x": "0.05r",
+                    "y": 0,
+                    "font": "Courier New",
+                    "font-weight": "normal",
+                    "font-size": "14",
+                    "justify": "left",
+                    "background-colour": "#333333"
+                }
+            }
+        ]
       }
     },
     "Board": {
@@ -496,7 +845,7 @@
           },
           {
             "type": "Row",
-            "x": "0.23r",
+            "x": "0.15r",
             "y": 70,
             "contentLeft": {
               "type": "Canvas",
@@ -511,7 +860,7 @@
           },
           {
             "type": "Row",
-            "x": "0.23r",
+            "x": "0.15r",
             "y": "0.82r",
             "background-colour": "#D9D9D9",
             "tag": "TileRow",
@@ -686,7 +1035,7 @@
               "width": "0.1r",
               "x": 0,
               "y": 0,
-              "font": "Jetbrains Mono",
+              "font": "Courier New",
               "font-weight": "normal",
               "font-size": "13",
               "justify": "centre",
@@ -701,7 +1050,7 @@
               "width": "0.2r",
               "x": 0,
               "y": 0,
-              "font": "Jetbrains Mono",
+              "font": "Courier New",
               "font-weight": "normal",
               "font-size": "13",
               "justify": "centre",

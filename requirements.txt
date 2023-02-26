@@ -1,3 +1,4 @@
 Pillow~=9.3.0
 pip~=21.2.3
 setuptools~=57.4.0
+pycallgraph2~=1.1.3
