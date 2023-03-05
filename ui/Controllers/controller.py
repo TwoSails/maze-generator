@@ -1,7 +1,7 @@
 import os
 import time
 from tkinter.filedialog import asksaveasfile, askdirectory
-from tkinter.messagebox import showerror
+from tkinter.messagebox import showerror, showinfo
 import threading
 import logging
 import shutil
@@ -14,7 +14,6 @@ from pycallgraph2.output import GraphvizOutput
 from mazeGenerator import App
 from mazeGenerator.controllers import ImageHandler
 from mazeGenerator.config import Config
-from ui.Components import Canvas
 
 
 logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.WARN,
@@ -46,36 +45,21 @@ class Controller:
         self.currentGeneration = None
 
     def addComponent(self, tag, component):
+        """
+        Used to add a UI Component link to the controller
+        :param tag: Component tag
+        :param component: Component object
+        :return:
+        """
         self.components[tag] = component
         if tag in self.fetch.keys():
             self.inputData[tag] = component.fetchData
 
-    def convertBoardToCanvas(self, maze):
-        outputDir = self.config.get("outputImgPath")
-        filePath = f"{outputDir}maze_{maze}.png"
-        img = PillowImage.open(filePath)
-        data = ""
-        for pixel in img.getdata():
-            data += f"{str(hex(pixel[0]))[2:].rjust(2, '0')}{str(hex(pixel[1]))[2:].rjust(2, '0')}{str(hex(pixel[2]))[2:].rjust(2, '0')}"
-
-        canvas = self.getCanvas()
-        if not canvas:
-            return
-        canvas.updateImage(resolutionX=img.size[0], resolutionY=img.size[1], data=data)
-
-    def getCanvas(self) -> Canvas | bool:
-        if "Canvas" not in self.components.keys():
-            return False
-        return self.components["Canvas"]
-
-    def drawBoard(self, maze):
+    def drawBoard(self, maze: int):
         outputDir = self.config.get("outputImgPath")
         self.img = f"{outputDir}maze_{maze}.png"
-        canvas = self.getCanvas()
+        canvas = self.components["Canvas"]
         canvas.displayImage(self.img)
-
-    def assign_fetch(self):
-        pass
 
     def gather_data(self):
         for tag in self.inputData.keys():
@@ -88,6 +72,8 @@ class Controller:
             img = f"{outputDir}maze_{i}.png"
             canvas = self.components["Canvas"]
             canvas.displayQuarterImage(img, i)
+
+        showinfo("Generations", f"{len(self.apps)} mazes have been generated. Select the best maze")
 
     def generateFrame(self, board, boardIdx, index):
         """
@@ -124,7 +110,7 @@ class Controller:
         :param regen:
         :return:
         """
-        canvas = self.getCanvas()
+        canvas = self.components["Canvas"]
         progressBar = self.components["AnimationProgressBar"]
         progressText = self.components["AnimationProgressText"]
         if not canvas:
@@ -286,31 +272,28 @@ class Controller:
         if self.fetch["GenerationsInt"] > 1:
             self.displayGenerations()
 
-    def button_downloadPDF(self, *_):
-        file = asksaveasfile(mode="wb", defaultextension=".pdf")
-        if file is None:
+    def download_maze(self, imgType, scale=100):
+        if len(self.apps) == 0 or self.currentGeneration is None:
             return
-
-        io = BytesIO()
-        img = PillowImage.open(self.img).convert("RGB")
-        img = img.resize((img.size[0] * 50, img.size[1] * 50), PillowImage.NEAREST)
-        img.save(io, "PDF")
-        img.seek(0)
-        file.write(io.getbuffer())
-        file.close()
-
-    def button_downloadPNG(self, *_):
-        file = asksaveasfile(mode="wb", defaultextension=".png")
+        file = asksaveasfile(mode="wb", defaultextension=f".{imgType.lower()}")
         if file is None:
             return
 
         io = BytesIO()
         img = PillowImage.open(self.img)
-        img = img.resize((img.size[0] * 100, img.size[1] * 100), PillowImage.NEAREST)
-        img.save(io, "PNG")
+        if imgType == "PDF":
+            img = img.convert("RGB")
+        img = img.resize((img.size[0] * scale, img.size[1] * scale), PillowImage.NEAREST)
+        img.save(io, imgType)
         img.seek(0)
         file.write(io.getbuffer())
         file.close()
+
+    def button_downloadPDF(self, *_):
+        self.download_maze("PDF", 50)
+
+    def button_downloadPNG(self, *_):
+        self.download_maze("PNG", 100)
 
     def button_playPause(self, *_):
         self.play = not self.play

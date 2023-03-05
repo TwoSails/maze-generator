@@ -107,6 +107,12 @@ class Canvas(Component):
         self.component.create_image(self.getAbsoluteWidth() / 4 * row,
                                     self.getAbsoluteHeight() / 4 * col,
                                     image=self.generationImages[quarter])
+        self.component.create_line(width, 0,
+                                   width, self.getAbsoluteHeight(),
+                                   fill="orange")
+        self.component.create_line(0, height,
+                                   self.getAbsoluteWidth(), height,
+                                   fill="orange")
 
     def updateImage(self, resolutionX: int, resolutionY: int, data: str):  # Canvas efficiency
         if [resolutionX, resolutionY] != self.resolution:  # Different resolutions will be different pixel locations

@@ -187,7 +187,7 @@
             "y": 350,
             "contentLeft": {
               "type": "Text",
-              "text": "Seed",
+              "text": "Seed:",
               "height": 40,
               "width": "0.15r",
               "x": "0.05r",
@@ -214,6 +214,25 @@
             "y": 400,
             "contentLeft": {
               "type": "Text",
+              "text": "Initialises the number generator to a set value\nAccepts any alphanumeric, recommended blank",
+              "height": 40,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "centre",
+              "background-colour": "#333333"
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 450,
+            "contentLeft": {
+              "type": "Text",
               "text": "Tile Set",
               "height": 40,
               "width": "0.15r",
@@ -230,7 +249,7 @@
           {
             "type": "Row",
             "x": "0.05r",
-            "y": 450,
+            "y": 490,
             "background-colour": "#333333",
             "contentLeft": {
               "type": "Grid",
@@ -274,6 +293,25 @@
                     "command": "button_secondaryTileSet"
                 }
               ]
+            },
+            "contentRight": null
+          },
+          {
+            "type": "Row",
+            "x": 0,
+            "y": 580,
+            "contentLeft": {
+              "type": "Text",
+              "text": "Click + and open a valid folder",
+              "height": 20,
+              "width": "0.25r",
+              "x": 0,
+              "y": 0,
+              "font": "Open Sans",
+              "font-weight": "normal",
+              "font-size": "14",
+              "justify": "centre",
+              "background-colour": "#333333"
             },
             "contentRight": null
           },
