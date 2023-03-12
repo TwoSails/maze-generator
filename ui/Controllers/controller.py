@@ -8,6 +8,7 @@ import shutil
 from io import BytesIO
 from PIL import Image as PillowImage
 from typing import List
+
 from pycallgraph2 import PyCallGraph
 from pycallgraph2.output import GraphvizOutput
 
@@ -78,7 +79,7 @@ class Controller:
     def generateFrame(self, board, boardIdx, index):
         """
         Frame handler
-        :param board: <cells>
+        :param board: list of cells
         :param boardIdx: position in sequence of maze creation
         :param index: generation of maze
         :return:
@@ -86,7 +87,8 @@ class Controller:
         maze = self.apps[index]
         img = ImageHandler(width=maze.board.width, height=maze.board.height,
                            tileImageResolution=maze.tileImageResolution, tileResolution=maze.tileResolution,
-                           board=board, tileSetName=maze.tileSetName, seed=maze.board.seed, name=f"frames/maze_{boardIdx}")
+                           board=board, tileSetName=maze.tileSetName, seed=maze.board.seed,
+                           name=f"frames/maze_{boardIdx}")
         img.SetTiles(maze.tileSet)
         img.GenerateImage()
 
@@ -102,6 +104,9 @@ class Controller:
             thread = threading.Thread(target=self.generateFrame, args=(board, boardIdx, index, ))
             threads.append(thread)
             thread.start()
+
+        for thread in threads:
+            thread.join()
 
     def displayAnimation(self, index, regen=False):
         """
@@ -137,6 +142,17 @@ class Controller:
             time.sleep(0.2 / self.speed)
             regenIncrement = False
 
+            if progress == 100:
+                self.button_playPause()
+
+    def generateImage(self, index):
+        maze = self.apps[index]
+        img = ImageHandler(width=maze.board.width, height=maze.board.height,
+                           tileImageResolution=maze.tileImageResolution, tileResolution=maze.tileResolution,
+                           board=maze.board.board, tileSetName=maze.tileSetName, seed=maze.board.seed, name=f"maze_{index}")
+        img.SetTiles(maze.tileSet)
+        img.GenerateImage()
+
     def generateMaze(self, index):
         """
         Handler method to generate a maze
@@ -146,18 +162,15 @@ class Controller:
         maze = self.apps[index]
         if maze.board.width * maze.board.height > 600:
             self.fetch["LogBool"] = False
+        logging.warning(f"Generating maze with logging: {self.fetch['LogBool']}")
         if self.fetch["GraphBool"] and maze.board.width * maze.board.height < 600:
             graphviz = GraphvizOutput()
             graphviz.output_file = "./ui/Config/data/maze_graph.png"
             with PyCallGraph(output=graphviz):
-                resApp = maze.run(self.fetch["LogBool"])
+                maze.run(self.fetch["LogBool"])
+                logging.warning(f"Generating a maze with graph")
         else:
-            resApp = maze.run(self.fetch["LogBool"])
-        img = ImageHandler(width=maze.board.width, height=maze.board.height,
-                           tileImageResolution=maze.tileImageResolution, tileResolution=maze.tileResolution,
-                           board=resApp.data, tileSetName=maze.tileSetName, seed=maze.board.seed, name=f"maze_{index}")
-        img.SetTiles(maze.tileSet)
-        img.GenerateImage()
+            maze.run(self.fetch["LogBool"])
 
     def setSeed(self, seed):
         if "SeedOut" not in self.components.keys():
@@ -248,7 +261,8 @@ class Controller:
             thread.start()
 
         for i, thread in enumerate(threads):
-            thread.join()
+            thread.join(40)
+            self.generateImage(i)
             logging.warning(f"Maze {i} completed")
             if self.fetch["GenerationsInt"] == 1:
                 self.currentGeneration = 0
@@ -406,12 +420,12 @@ class Controller:
         CellResolution = self.components["CellResolution"]
         if cell.collapsed:
             CellName.update(cell.getTile().getName())
-            CellTransformation.update(cell.getTile().getTransformation())
+            CellTransformation.update(str(cell.getTile().getTransformation()))
             CellResolution.update(cell.getTile().getResolution())
         else:
-            CellName.update("Uncollapsed")
-            CellTransformation.update("Uncollapsed")
-            CellResolution.update("Uncollapsed")
+            CellName.update("Not Collapsed")
+            CellTransformation.update("Not Collapsed")
+            CellResolution.update("Not Collapsed")
         CellLocation = self.components["CellLocation"]
         idx = cell.row * self.apps[self.currentGeneration].board.width + cell.col
         CellLocation.update(f"Row {cell.row} / Col {cell.col} - Index {idx}")
