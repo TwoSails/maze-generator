@@ -35,7 +35,8 @@ class Transformation:
                 edge.yAxis = self.__edge.xAxis
 
             case _:
-                pass
+                edge.xAxis = self.__edge.xAxis
+                edge.yAxis = self.__edge.yAxis
 
         edge.transformation = angle
 
@@ -50,12 +51,12 @@ class Transformation:
         edge = Edge()
         match axis:
             case Axis.X:
-                edge.xAxis = self.__edge.xAxis
-                edge.yAxis = list(reversed(self.__edge.yAxis))
+                edge.xAxis = [pos[::-1] for pos in self.__edge.xAxis]
+                edge.yAxis = [pos[::-1] for pos in reversed(self.__edge.yAxis)]
 
             case Axis.Y:
-                edge.xAxis = list(reversed(self.__edge.xAxis))
-                edge.yAxis = self.__edge.yAxis
+                edge.xAxis = [pos[::-1] for pos in reversed(self.__edge.xAxis)]
+                edge.yAxis = [pos[::-1] for pos in self.__edge.yAxis]
 
         edge.transformation = axis
 
