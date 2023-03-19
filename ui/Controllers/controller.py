@@ -340,10 +340,15 @@ class Controller:
             row = 0
         else:
             row = 1
-        self.currentGeneration = col + row * 2
+        generation = col + row * 2
+        if generation + 1 > self.fetch["GenerationsInt"]:
+            return
+        self.currentGeneration = generation
         self.displayMaze(self.currentGeneration)
 
     def selectingCell(self, pos):
+        if self.play:
+            return
         canvas = self.components["Canvas"]
         widthOfCells = canvas.getAbsoluteWidth() / self.apps[self.currentGeneration].board.width
         heightOfCells = canvas.getAbsoluteHeight() / self.apps[self.currentGeneration].board.height
@@ -452,6 +457,9 @@ class Controller:
             return
         name = directory.split("/")[-1]
         if configDataPath not in directory:
+            dataPath = os.listdir(configDataPath)
+            if name in dataPath:
+                name = f"{name}_{len(list(filter(lambda dataDir: name in dataDir, dataPath)))}"
             os.makedirs(f"{configDataPath}/{name}")
             for file in os.listdir(directory):
                 if os.path.isdir(directory + file):
