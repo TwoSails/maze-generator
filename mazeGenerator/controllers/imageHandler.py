@@ -59,7 +59,7 @@ class ImageHandler:
             except ValueError:
                 return Err(TypeError)
 
-        validate = abs(validate)
+        validate = abs(validate)  # Converts to positive value
         if validate <= bound:
             return Err()
 
@@ -205,6 +205,9 @@ class ImageHandler:
         print(f"{palettes=}")
 
     def Scale(self, scale=2):
+        """
+        Scales the image from absolute size to larger resolution
+        """
         scaled_img = ImageFuncs.new("RGBA", (self.maze.width * scale, self.maze.height * scale))
         draw = ImageDraw.Draw(scaled_img)
         for xy, pixel in enumerate(list(self.maze.getdata())):

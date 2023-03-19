@@ -7,5 +7,8 @@ from enum import Enum
 
 
 class Axis(Enum):
+    """
+    Represents the transformation axis for reflection
+    """
     X = 100
     Y = 101

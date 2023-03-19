@@ -46,6 +46,11 @@ class Cell:
         return ""
 
     def collapse(self) -> Response:
+        """
+        Reduces the available tiles in the cell to a single tile
+        This is done by random choice from available tiles or by the only tile available
+        :return: Success or Fail
+        """
         if len(self.availableTiles) == 0:
             return Err(InvalidState)
 
@@ -57,5 +62,11 @@ class Cell:
         return Ok(self.tile)
 
     def reduce(self, edge_label, direction):
+        """
+        Filters the available tiles on the cell
+        :param edge_label:
+        :param direction:
+        :return:
+        """
         self.availableTiles = list(filter(lambda tile: tile.getEdge(direction).data == edge_label, self.availableTiles))
         self.entropy = len(self.availableTiles)

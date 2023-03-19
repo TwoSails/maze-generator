@@ -19,7 +19,7 @@ from typing import List
 class Board:
     def __init__(self):
         self.__config: Config = Config()
-        self.height: int = 0  # Width
+        self.height: int = 0
         self.width: int = 0
         self.tileSet: List[Tile] = []
         self.board: List[Cell] = []
@@ -74,6 +74,9 @@ class Board:
         return neighbours_new
 
     def generateBoard(self):
+        """
+        Initialises the board with blank cells and inputs the seed into the cell
+        """
         if self.seed == 0 or self.seed == "":
             self.seed = "".join([str(random.randint(0, 10)) for _ in range(10)])
         for row in range(self.height):
@@ -82,6 +85,9 @@ class Board:
                 self.board[-1].setSeed()
 
     def findLowestEntropy(self) -> Response:
+        """
+        Iterates through the board and will return the cell with the lowest entropy
+        """
         if len(self.board) == 0:
             return Err(EmptyBoard)
         lowestEntropy = self.board[0]
@@ -96,6 +102,9 @@ class Board:
         return Ok(lowestEntropy)
 
     def performCollapse(self):
+        """
+        Controller method for the algorithm iterating through the board until it is collapsed or fails
+        """
         invalid = False
         while not invalid and not self.collapsed:
             invalid = self.calculateEntropy()
@@ -104,7 +113,7 @@ class Board:
 
             lowestCell = self.findLowestEntropy()
             if lowestCell.success:
-                lowestCell.data.collapse()
+                lowestCell.data.collapse()  # Collapses the lowest entropy cell
 
             if self.logging:
                 # That's one way to make it thread safe i guess...
@@ -125,17 +134,17 @@ class Board:
     def calculateEntropy(self):
         invalidState = False
         idx = 0
-        # for cell in filter(lambda c: c.collapsed, self.board):
-        #     pass
         while not invalidState and idx < len(self.board):
             cell = self.board[idx]
             if cell.collapsed:
+                # Get neighbouring cells and filters out collapsed cells to return only cells which are not collapsed
                 neighbours: List[Cell] = list(filter(lambda c: not c.collapsed, self.getNeighbours(cell.row, cell.col)))
                 if len(neighbours) == 0:
                     idx += 1
                     continue
 
                 for neighbour_cell in neighbours:
+                    # Relative coordinate change
                     delta_row = neighbour_cell.row - cell.row
                     delta_col = neighbour_cell.col - cell.col
                     if delta_row != 0:
@@ -143,10 +152,11 @@ class Board:
                     else:
                         direction = f"{'pos' if delta_col > 0 else 'neg'}-x"
                     edge_label = cell.getEdge(direction)
+                    # Matching edge labels with neighbour to find valid possible neighbours to current cell
                     neighbour_cell.reduce(edge_label[::-1], self.reverse_direction(direction))
                     # [::-1] reverses the string this is required for asymmetrical labels
                     if neighbour_cell.entropy == 1:  # Tile has only one tile available
-                        neighbour_cell.collapse()
+                        neighbour_cell.collapse()  # Default collapses lowest entropy cell
                     elif neighbour_cell.entropy == 0 and not neighbour_cell.collapsed:  # Tile has no options
                         invalidState = True
             idx += 1
@@ -154,6 +164,9 @@ class Board:
         return invalidState
 
     def stateComplete(self) -> bool:
+        """
+        Determines if the board has been completed
+        """
         complete = True
         idx = 0
         while idx < len(self.board) and complete:
@@ -164,6 +177,9 @@ class Board:
         return complete
 
     def stateInvalid(self) -> bool:
+        """
+        Determines if the board has ran out of options
+        """
         invalid = False
         idx = 0
         while idx < len(self.board) and not invalid:

@@ -7,6 +7,9 @@ from enum import Enum
 
 
 class Rotation(Enum):
+    """
+    Represents the angle of rotation being applied in 90 degrees
+    """
     zero = 0
     one = 1
     two = 2

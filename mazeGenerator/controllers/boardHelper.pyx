@@ -1,9 +1,25 @@
 def getIdx(int row, int col, int width, int height):
+    """
+    Cython implementation of index fetching
+    :param row: cell position
+    :param col: cell position
+    :param width: board width
+    :param height: board height
+    :return: board index
+    """
     if row > height or col > width or row < 0 or col < 0:
         return -1
     return row * width + col
 
 def getNeighbourIndexes(int row, int col, int width, int height):
+    """
+    Helper
+    :param row: cell position
+    :param col: cell position
+    :param width: board width
+    :param height: board height
+    :return: list of cell indexes
+    """
     cdef int neighbours[4]
     cdef int delta_row, delta_col, idx
     cdef int neighbour_row, neighbour_col, cellIdx
