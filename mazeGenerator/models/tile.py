@@ -6,7 +6,7 @@ Description: This is the Tile class which handles the single tile with compositi
 # Python Modules
 import os
 import json
-from typing import List
+from typing import List, Optional
 
 # External Modules
 from PIL import Image
@@ -39,8 +39,7 @@ class Tile:
 
     def __setBasePath(self) -> str:
         """
-        Fixes config path
-        :return:
+        Fixes config path by ensuring it is represented as expected
         """
         dataPath = self.__config.get("dataPath")
         if dataPath[-1] != "/":
@@ -59,7 +58,7 @@ class Tile:
         :param name: Tile name
         :return: Response
         """
-        name = name.rjust(2, "0")
+        name = name.rjust(2, "0")  # Ensures that the length of the tile name is 2 characters, fills empty space with 0
 
         if self.__tileSetName == "":
             return Err(TileNameNotSet)
@@ -78,8 +77,6 @@ class Tile:
     def setTileSet(self, name: str) -> Response:
         """
         Setter method for tile set name with validation
-        :param name:
-        :return:
         """
         if name not in os.listdir(self.__config.get("dataPath")):
             return Err(TileSetDoesNotExist)
@@ -96,7 +93,7 @@ class Tile:
         """
         Setter method with validation for inputted resolution
         :param res: Pixel resolution of tile
-        :return:
+        :return: Response containing the resolution
         """
         if isinstance(res, str):
             try:
@@ -114,7 +111,13 @@ class Tile:
     def getResolution(self) -> int:
         return self.__resolution
 
-    def makeFilePath(self, name: str | None = "", tileSet: str = "") -> str:
+    def makeFilePath(self, name: Optional[str] = "", tileSet: str = "") -> str:
+        """
+        Helper method to assemble the path to a tile with optional parameters
+        :param name:
+        :param tileSet:
+        :return: file path
+        """
         if tileSet == "":
             tileSet = self.__tileSetName
             if tileSet == "":
@@ -126,6 +129,9 @@ class Tile:
         return f"{self.__filePath}{tileSet}{f'/{name}' if name != '' else ''}"
 
     def loadImage(self) -> Response:
+        """
+        Loads the image and edge labels
+        """
         if self.__tileSetName == "":
             return Err(TileSetNameNotSet)
 
@@ -147,11 +153,12 @@ class Tile:
         if not tileParams["active"]:
             return Err(TileNotActive)
 
+        # Opening the image
         self.__image: Image.Image = Image.open(self.makeFilePath(name=tileParams["fileName"]))
         self.__image.load()
 
         tileEdges = tileParams["edges"]
-
+        # Loads the edge label details
         self.__edges.append(Edge(pX=tileEdges["pos-x"],
                             pY=tileEdges["pos-y"],
                             nX=tileEdges["neg-x"],
@@ -159,6 +166,7 @@ class Tile:
 
         self.__resolution = tileConfig["resolution"]
 
+        # Applies transformations to the edge in accordance to the config file
         for transformation in tileParams["transformations"]:
             if transformation == "rotate":
                 self.__transformations.extend([Rotation.one, Rotation.two, Rotation.three])
@@ -167,17 +175,20 @@ class Tile:
 
         return Ok(self.__edges)
 
-    def getEdge(self, direction: str, transformation: Transformation | None = None) -> Response:
+    def getEdge(self, direction: str, transformation: Optional[Transformation] = None) -> Response:
+        """
+        Gets the edge label of the tile in a specific transformation
+        """
         # TODO: Fully implement this please - done my good friend :thumbs_up:
         if len(self.__edges) == 0:
             return Err(TileNotLoaded)
         edges = ["pos-x", "pos-y", "neg-x", "neg-y"]
-        if direction.lower() not in edges:
+        if direction.lower() not in edges:  # Validates direction
             return Err(InvalidEdgeLabel)
 
         edgeTransformed = None
 
-        if transformation is None and len(self.__edges) == 1:
+        if transformation is None and len(self.__edges) == 1:  # if no transformation specified, returns the first edge
             edgeTransformed = self.__edges[0]
         else:
             for edge in self.__edges:
@@ -217,11 +228,19 @@ class Tile:
         return Ok(self.__edges)
 
     def inherit(self, obj, edge):
+        """
+        Helper method for expanding the tile object, used to apply data
+        """
         self.__edges = [edge]
         self.__tileSetName = obj.getTileSet()
         self.__name = obj.getName()
 
     def expand(self) -> list:
+        """
+        Converts collective tile (tile which contains all of its transformations) to individual tile objects with
+        one transformation
+        :return: list of tiles
+        """
         tiles = []
         for edge in self.__edges:
             tiles.append(Tile())

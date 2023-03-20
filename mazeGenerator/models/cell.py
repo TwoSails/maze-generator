@@ -21,6 +21,9 @@ class Cell:
         self.col: int = col
 
     def __repr__(self):
+        """
+        Python dunder method to represent the cell object
+        """
         return f"Cell<{self.collapsed=}, {self.entropy=}, {self.tile=}, {self.transformation=} {self.row}-{self.col}>"
 
     def setSeed(self):
@@ -64,9 +67,8 @@ class Cell:
     def reduce(self, edge_label, direction):
         """
         Filters the available tiles on the cell
-        :param edge_label:
-        :param direction:
-        :return:
+        :param edge_label: neighbouring cell's edge label
+        :param direction: direction of self cell to the neighbouring cell
         """
         self.availableTiles = list(filter(lambda tile: tile.getEdge(direction).data == edge_label, self.availableTiles))
         self.entropy = len(self.availableTiles)

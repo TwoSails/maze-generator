@@ -1,4 +1,6 @@
-# Tile Exceptions
+"""
+Exceptions used to indicate errors which occurred during the execution of the WFC
+"""
 class TileNameNotSet(Exception):
     pass
 

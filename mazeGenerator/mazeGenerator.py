@@ -107,6 +107,9 @@ class App:
         return Err(InvalidState if self.board.stateInvalid() else None, data=self.board.board)
 
     def countTiles(self):
+        """
+        Iterates through board and counts uses of a tile
+        """
         tiles = {}
         for tile in self.board.board:
             if tile is None:

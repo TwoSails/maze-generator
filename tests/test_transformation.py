@@ -64,7 +64,8 @@ class TestTransformation(unittest.TestCase):
         reflect = transformation.reflect(Axis.X)
 
         self.assertTrue(
-            (reflect.xAxis == [labels["d"], labels["b"]]) and (reflect.yAxis == [labels["a"], labels["c"]]),
+            (reflect.xAxis == [labels["d"][::-1], labels["b"][::-1]]) and
+            (reflect.yAxis == [labels["a"][::-1], labels["c"][::-1]]),
             msg=f"{reflect.xAxis=}, {reflect.yAxis=}"
         )
 
@@ -77,7 +78,8 @@ class TestTransformation(unittest.TestCase):
         reflect = transformation.reflect(Axis.Y)
 
         self.assertTrue(
-            (reflect.xAxis == [labels["b"], labels["d"]]) and (reflect.yAxis == [labels["c"], labels["a"]]),
+            (reflect.xAxis == [labels["b"][::-1], labels["d"][::-1]]) and
+            (reflect.yAxis == [labels["c"][::-1], labels["a"][::-1]]),
             msg=f"{reflect.xAxis=}, {reflect.yAxis=}"
         )
 

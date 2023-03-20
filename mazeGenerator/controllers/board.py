@@ -54,6 +54,9 @@ class Board:
         self.seed = seed
 
     def getIdx(self, row: int, col: int) -> Response:
+        """
+        Converts row - column coordinates to index of board array
+        """
         if row > self.height or col > self.width or row < 0 or col < 0:
             return Err(ExceedsBounds)
 
@@ -65,12 +68,18 @@ class Board:
         return OkResponse(idx)
 
     def getNeighbours(self, row: int, col: int) -> List[Cell]:
+        """
+        Gathers the surrounding cells around a cell
+        This uses the Cython implementation to speed up data fetching
+        :returns: list of neighbours
+        """
         if f"{row}-{col}" in self.neighbourCache.keys():
             return self.neighbourCache[f"{row}-{col}"]
+        # Returns list of board indexes of neighbouring cells
         neighboursIdx = getNeighbourIndexes(row, col, self.width, self.height)
 
-        neighbours_new = [self.board[idx] for idx in neighboursIdx if idx != -1]
-        self.neighbourCache[f"{row}-{col}"] = neighbours_new
+        neighbours_new = [self.board[idx] for idx in neighboursIdx if idx != -1]  # Gets cell objects from board indexes
+        self.neighbourCache[f"{row}-{col}"] = neighbours_new  # Saves in cache to prevent re-calculation of indexes
         return neighbours_new
 
     def generateBoard(self):
@@ -91,12 +100,14 @@ class Board:
         if len(self.board) == 0:
             return Err(EmptyBoard)
         lowestEntropy = self.board[0]
-        for cell in list(filter(lambda c: not c.collapsed, self.board)):
+        for cell in list(filter(lambda c: not c.collapsed, self.board)):  # Gets list of non-collapsed cells in board
             if ((cell.entropy < lowestEntropy.entropy and not cell.collapsed)
                     or (not cell.collapsed and lowestEntropy.collapsed)):
                 # This was the line of code which posed the most issues due to it overwriting lowest cell with collapsed
                 # cells and hence creating an infinite loop
                 # defining condition being "and not cell.collapsed"
+                # this condition checks whether a cell has a lower entropy than the current lowest and isn't collapsed
+                # or that the cell isn't collapsed and the current lowest entropy cell is collapsed
                 lowestEntropy = cell
 
         return Ok(lowestEntropy)
@@ -132,6 +143,9 @@ class Board:
         return "-".join(direction)
 
     def calculateEntropy(self):
+        """
+        Iterates through whole board and calculates the entropy of each cell
+        """
         invalidState = False
         idx = 0
         while not invalidState and idx < len(self.board):

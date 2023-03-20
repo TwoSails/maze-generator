@@ -12,7 +12,7 @@ from mazeGenerator.models import Edge
 
 class Transformation:
     def __init__(self, edge: Edge):
-        self.__edge = edge
+        self.__edge = edge  # Base edge labels for transformations to be applied to
 
     def rotate(self, angle: Rotation):
         """
@@ -35,8 +35,7 @@ class Transformation:
                 edge.yAxis = self.__edge.xAxis
 
             case _:
-                edge.xAxis = self.__edge.xAxis
-                edge.yAxis = self.__edge.yAxis
+                pass
 
         edge.transformation = angle
 
