@@ -62,31 +62,45 @@ class Grid:
         return self.getAbsoluteY() / self.geometry[1]
 
     def addElement(self, element: Component):
+        """
+        Adds component to the grid
+        """
         self.grid.append(Frame(self.gridFrame, bg=self.backgroundColour))
         element.parentFrame = self.grid[-1]
         self.elements.append(element)
 
     def addStrictElement(self, element: Component):
+        """
+        Used to add component whilst grid is active
+        """
         self.grid.append(Frame(self.gridFrame, bg=self.backgroundColour))
         element.setParentFrame(self.grid[-1])
         self.elements.append(element)
 
     def reassembleElements(self):
+        """
+        Force refresh of all elements to assign new parent frames
+        """
         self.grid = []
         for element in self.elements:
             self.grid.append(Frame(self.gridFrame, bg=self.backgroundColour))
             element.parentFrame = self.grid[-1]
 
     def build(self, *_, drop: bool = False, coords=None):
+        """
+        Displays the grid and elements on tkinter window
+        "_" parameter Catches any positional arguments which are required, caused by additional parameters in config
+        """
         if coords is None:
             coords = []
         width = [element.getAbsoluteWidth() + self.padding for element in self.elements]
         rowWidth = 0
         rows: List[List[Component]] = [[]]
+        # Determine position of element in grid
         for idx, elementWidth in enumerate(width):
             rowWidth += elementWidth
             if (rowWidth >= self.getAbsoluteWidth() or
-               len(rows[-1]) >= (1000 if self.columns == "flex" else self.columns)):
+               len(rows[-1]) >= (1000 if self.columns == "flex" else self.columns)):  # How many elements per row
                 rows.append([self.elements[idx]])
                 rowWidth = 0
             else:
@@ -96,7 +110,7 @@ class Grid:
 
         for idx, row in enumerate(rows):
             for col, element in enumerate(row):
-                element.build(drop=True, coords=[idx + 1, col + 1])
+                element.build(drop=True, coords=[idx + 1, col + 1])  # Building elements passing through grid location
                 self.grid[index].pack()
                 index += 1
         if drop and len(coords) == 2:
@@ -105,6 +119,9 @@ class Grid:
             self.gridFrame.place(relx=self.getRelativeX(), rely=self.getRelativeY())
 
     def refresh(self):
+        """
+        Force reloads components onto tkinter window
+        """
         self.gridFrame.destroy()
         self.gridFrame = Frame(self.parentFrame,
                                width=self.getAbsoluteWidth(),
@@ -116,6 +133,9 @@ class Grid:
         self.build()
 
     def destroy(self):
+        """
+        Removes the component and elements from tkinter window
+        """
         self.gridFrame.destroy()
         for element in self.elements:
             if hasattr(element, "destroy"):

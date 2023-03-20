@@ -30,6 +30,7 @@ class Widget:
                                  bg=self.backgroundColour,
                                  **kwargs)
         self.controller = controller
+        # All active components able to be referenced by the config
         self.components = {
             "Grid": Grid,
             "Row": Row,
@@ -66,6 +67,9 @@ class Widget:
         return self.getAbsoluteY() / self.geometry[1]
 
     def place(self):
+        """
+        Displays the widget component on the tkinter screen
+        """
         if self.absoluteDimensions:
             self.widgetFrame.place(x=self.getAbsoluteX(),
                                    y=self.getAbsoluteY(),
@@ -79,10 +83,16 @@ class Widget:
                                    relwidth=self.width)
 
     def addRow(self, x: int = 0, y: int = 0, bg: Optional[str] = "", **kwargs) -> Row:
+        """
+        Creates new layout component
+        """
         self.rows.append(Row(self.widgetFrame, self.geometry, x=x, y=y, bg=bg, **kwargs))
         return self.rows[-1]
 
     def buildRows(self):
+        """
+        Displays all rows in the widget
+        """
         for index, row in enumerate(self.rows):
             row.build(index)
 
@@ -95,21 +105,28 @@ class Widget:
             row.refresh()
 
     def insertRow(self, idx: int, row: Row):
+        """
+        Adds a row a specific index
+        """
         if idx + 1 >= len(self.rows):
             return
 
         self.rows.insert(idx + 1, row)
 
     def configureRow(self, row, style):
+        """Sets component to row contents"""
         if "width" in style:
             row.setMaxWidth(style.get("width"))
         if style["contentLeft"] is not None:
-            row.setContentLeft(self.explore(style["contentLeft"]))
+            row.setContentLeft(self.explore(style["contentLeft"]))  # Searches content to assemble all components
         if style["contentRight"] is not None:
             row.setContentRight(self.explore(style["contentRight"]))
         return row
 
     def explore(self, style):
+        """
+        Recursively searches the style to assemble components
+        """
         if style is None:
             return
         elementType = style.get("type")
@@ -149,6 +166,9 @@ class Widget:
         return component
 
     def display(self, window: str = ""):
+        """
+        Displays content for a specific window
+        """
         elements = self.style["elements"][window]
         for element in elements:
             elementType = element["type"]

@@ -7,6 +7,9 @@ from ui.Components import Component
 
 
 class Progress(Component):
+    """
+    Canvas component to create an incremented progress bar
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.setComponent()
@@ -28,6 +31,9 @@ class Progress(Component):
                                         bg=self.backgroundColour)
         
     def initCanvas(self):
+        """
+        Creates background empty colour
+        """
         self.component.delete("all")
         self.component.create_line(self.getAbsoluteHeight() / 2 - 1,
                                    self.getAbsoluteHeight() / 2 - 1,
@@ -38,8 +44,8 @@ class Progress(Component):
 
     def drawLine(self):
         self.component.delete("progress")
-        self.component.create_line(self.getAbsoluteHeight() / 2 - 1,
-                                   self.getAbsoluteHeight() / 2 - 1,
+        self.component.create_line(self.getAbsoluteHeight() / 2 - 1,  # X1
+                                   self.getAbsoluteHeight() / 2 - 1,  # Y1
                                    (self.value / 100) * self.getAbsoluteWidth() - self.getAbsoluteHeight() / 2 - 1,
                                    self.getAbsoluteHeight() / 2 - 1,
                                    width=self.getAbsoluteHeight(),
@@ -48,7 +54,7 @@ class Progress(Component):
 
     def increment(self, value):
         self.value += value
-        self.value = max([self.value, 0])
+        self.value = max([self.value, 0])  # Validates value to check bounds
         self.value = min([self.value, 100])
         self.drawLine()
 

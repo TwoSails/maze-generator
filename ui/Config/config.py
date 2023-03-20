@@ -12,7 +12,6 @@ class Config:
     def loadConfig(self):
         """
         This method loads the configuration file
-        :return:
         """
         try:
             with open(self.__configPath, 'r') as file:

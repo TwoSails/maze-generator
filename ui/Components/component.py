@@ -7,10 +7,14 @@ from ui.misc import NoneTypeCheck
 
 
 class Component:
+    """
+    Represents a component which is placed in a parent widget
+    Holds styling and positional information about the component
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         self.parentFrame: Frame = parent
-        self.style = style
-        self.geometry = geometry
+        self.style = style  # Raw style data
+        self.geometry = geometry  # Used for relative dimensions and positioning
         self.height: float = NoneTypeCheck(style.get("height"), 0.0)
         self.width: float = NoneTypeCheck(style.get("width"), 0.0)
         self.x: int = NoneTypeCheck(style.get("x"))
@@ -22,11 +26,11 @@ class Component:
                                            height=self.getAbsoluteHeight(),
                                            width=self.getAbsoluteWidth(),
                                            bg=self.backgroundColour)
-        self.tag: str = NoneTypeCheck(style.get("tag"), None)
+        self.tag: str = NoneTypeCheck(style.get("tag"), None)  # Attaches the component to the controller
         self.component = None
         self.textLabel = None
-        self.active = False
-        self.fetchData = None
+        self.active = False  # Boolean to state if component is displayed
+        self.fetchData = None  # Identifies getter method for controller
         self.build()
 
     def setParentFrame(self, parent):
@@ -43,7 +47,7 @@ class Component:
 
     def getAbsoluteWidth(self):
         width: str | float = self.width
-        if "height" in str(width):
+        if "height" in str(width):  # Used to make component square
             return self.getAbsoluteHeight()
         if "r" in str(width):
             width = float(width.strip("r"))
@@ -80,6 +84,12 @@ class Component:
         return self.getAbsoluteY() / self.geometry[1]
 
     def build(self, alignment: Optional[int] = None, drop: Optional[bool] = False, coords=None):
+        """
+        Applies styling and positioning to display the component on the tkinter window
+        :param alignment: left or right justification
+        :param drop: used for displaying in a grid
+        :param coords: position in the grid
+        """
         # print(f"Building {self.style.get('type')} Component")
         if coords is None:
             coords = []
@@ -109,6 +119,9 @@ class Component:
         return True
 
     def destroy(self):
+        """
+        Removes component from display
+        """
         if self.component is None or not self.active:
             return False
         self.component.destroy()
@@ -116,6 +129,9 @@ class Component:
         print(f"Destroyed {self.style.get('type')} Component")
 
     def refresh(self):
+        """
+        Force updates component attributes
+        """
         if self.active:
             self.destroy()
         self.build()

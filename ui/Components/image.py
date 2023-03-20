@@ -9,6 +9,10 @@ from ui.Components import Component
 
 
 class Image(Component):
+    """
+    Using a Tkinter label object, displays an image
+    Used for displaying tiles
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.filePath = NoneTypeCheck(style.get("filename"), None)
@@ -26,7 +30,19 @@ class Image(Component):
         if self.command is not None:
             self.component.bind("<Button-1>", self.command)
 
+    def setComponent(self):
+        self.component = Label(self.componentFrame, image=self.img,
+                               bg=self.backgroundColour,
+                               highlightbackground=self.backgroundColour,
+                               highlightthickness=0)
+        self.component.image = self.img
+        if self.text is not None:
+            self.setTextLabel()
+
     def setTextLabel(self):
+        """
+        Add caption to image
+        """
         self.textLabel = Label(self.componentFrame,
                                text=self.text,
                                font=(NoneTypeCheck(self.style.get("font"), ""),
@@ -38,6 +54,9 @@ class Image(Component):
                                )
 
     def loadImage(self):
+        """
+        Transformation to tile images
+        """
         img = PillowImage.open(self.filePath)
         img = img.resize((int(self.getAbsoluteWidth()), int(self.getAbsoluteHeight())), PillowImage.NEAREST)
         if self.transformation is not None:
@@ -56,16 +75,10 @@ class Image(Component):
                     img = img
         self.img = ImageTk.PhotoImage(img)
 
-    def setComponent(self):
-        self.component = Label(self.componentFrame, image=self.img,
-                               bg=self.backgroundColour,
-                               highlightbackground=self.backgroundColour,
-                               highlightthickness=0)
-        self.component.image = self.img
-        if self.text is not None:
-            self.setTextLabel()
-
     def update(self, text="", filename=""):
+        """
+        Inserts new image or caption
+        """
         self.text = text,
         self.filePath = filename
 
@@ -80,6 +93,9 @@ class Image(Component):
         self.component.config(image=self.img)
 
     def border(self, border=None):
+        """
+        Adds border to image frame
+        """
         if border is None:
             self.componentFrame.config(bg=self.backgroundColour, padx=0, pady=0)
             return

@@ -8,6 +8,9 @@ from ui.Components import Component
 
 
 class BooleanInput(Component):
+    """
+    Represents checkbox input
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.state: IntVar = IntVar()
@@ -21,6 +24,9 @@ class BooleanInput(Component):
                                          variable=self.state)
 
     def setState(self, state: Optional[bool]):
+        """
+        Sets whether checkbox is selected
+        """
         if state is not None:
             self.state.set(int(state))
 

@@ -7,6 +7,9 @@ from ui.Components import Component
 
 
 class Text(Component):
+    """
+    Tkinter label component
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.text = NoneTypeCheck(style.get("text"), "")

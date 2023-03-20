@@ -9,6 +9,9 @@ from ui.Components import Component
 
 
 class Canvas(Component):
+    """
+    Tkinter Canvas width with methods to facilitate the drawing of objects and images on canvas
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.setComponent()
@@ -18,10 +21,10 @@ class Canvas(Component):
         if self.data is not None and self.resolution > 0:
             self.drawImage(resolutionX=self.resolution[0], resolutionY=self.resolution[1], data=self.data)
         self.image = None
-        self.command = NoneTypeCheck(style.get("command"), None)
+        self.command = NoneTypeCheck(style.get("command"), None)  # Used for interaction with canvas
         if self.command is not None:
             self.component.bind("<Button-1>", self.command)
-        self.ratio = 0
+        self.ratio = 0  # Scaling non-square images to fit instead of stretching images
         self.generationImages = []
 
     def setComponent(self):
@@ -83,9 +86,10 @@ class Canvas(Component):
                           int(self.getAbsoluteHeight() if self.ratio < 1 else self.getAbsoluteHeight() / self.ratio)),
                          Image.NEAREST)
         self.image = ImageTk.PhotoImage(img)
+        # Half width and height used to centre image
         self.component.create_image(self.getAbsoluteWidth() / 2, self.getAbsoluteHeight() / 2, image=self.image)
 
-    def displayQuarterImage(self, filePath, quarter: int):
+    def displayQuarterImage(self, filePath: str, quarter: int):
         """
         Displays an image in a quarter of the canvas area
         :param filePath: path to image
@@ -99,14 +103,16 @@ class Canvas(Component):
         height = self.getAbsoluteHeight() / 2
         img = img.resize((int(width if ratio > 1 else width * ratio),
                           int(height if ratio < 1 else height / ratio)),
-                         Image.NEAREST)
+                         Image.NEAREST)  # Scales image up with nearest neighbour filter to reduce blur
+        # Saves image object to persistent variable so tkinter has a reference to it through the lifetime of the img
         if len(self.generationImages) > quarter:
-            self.generationImages[quarter] = ImageTk.PhotoImage(img)
+            self.generationImages[quarter] = ImageTk.PhotoImage(img)  # Converts pillow image to tkinter image
         else:
             self.generationImages.append(ImageTk.PhotoImage(img))
         self.component.create_image(self.getAbsoluteWidth() / 4 * row,
                                     self.getAbsoluteHeight() / 4 * col,
                                     image=self.generationImages[quarter])
+        # Lines to show separation of quarter images
         self.component.create_line(width, 0,
                                    width, self.getAbsoluteHeight(),
                                    fill="orange")
@@ -114,22 +120,9 @@ class Canvas(Component):
                                    self.getAbsoluteWidth(), height,
                                    fill="orange")
 
-    def updateImage(self, resolutionX: int, resolutionY: int, data: str):  # Canvas efficiency
-        if [resolutionX, resolutionY] != self.resolution:  # Different resolutions will be different pixel locations
-            self.drawImage(resolutionX=resolutionX, resolutionY=resolutionY, data=data)
-            return
-
-        for index in range(resolutionX * resolutionY):
-            colour = data[index * 6: index * 6 + 6]
-            if colour != self.pixelsArr[index]:
-                row = index % resolutionY
-                col = index // resolutionX
-                self.component.delete(f"{row}-{col}")  # Prevent overlapping which may hinder performance
-                self.pixel(row=row,
-                           col=col,
-                           resolutionX=resolutionX,
-                           resolutionY=resolutionY,
-                           colour=colour)
-
     def drawRect(self, x1, y1, x2, y2, *_):
+        """
+        Draws a bounding box on the canvas
+        Used to highlight cells
+        """
         self.component.create_rectangle(x1, y1, x2, y2, outline="#B7F42B", width=2)

@@ -8,6 +8,9 @@ from ui.Components import Component
 
 
 class ButtonInput(Component):
+    """
+    Native button widget
+    """
     def __init__(self, parent: Frame,
                  style: Dict,
                  geometry: Tuple[int] | List[int],
@@ -21,12 +24,18 @@ class ButtonInput(Component):
         self.component = ttk.Button(self.componentFrame, text=self.text, command=self.command)
 
     def setCommand(self, command: callable):
+        """
+        Sets tkinter action on button interaction
+        """
         self.component = ttk.Button(self.componentFrame, text=self.text, command=command)
         if self.active:
             self.refresh()
 
 
 class Button(Component):
+    """
+    Custom button object built from a canvas for more styling options
+    """
     def __init__(self, parent: Frame,
                  style: Dict,
                  geometry: Tuple[int] | List[int],
@@ -40,6 +49,7 @@ class Button(Component):
         self.setComponent()
 
     def setComponent(self):
+        # Draws button in a canvas
         self.component: Canvas = Canvas(self.componentFrame, width=self.getAbsoluteWidth(),
                                         height=self.getAbsoluteHeight(),
                                         highlightbackground=self.backgroundColour,
@@ -47,7 +57,7 @@ class Button(Component):
                                         bg=NoneTypeCheck(self.style.get("button-colour"), "#ffffff"))
 
         if self.command is not None:
-            self.component.bind("<Button-1>", self.command)
+            self.component.bind("<Button-1>", self.command)  # Adds command through binding
         self.component.create_text(self.getAbsoluteWidth() - (int(self.font[1]) * len(self.text) / 1.5),
                                    (self.getAbsoluteHeight() - int(self.font[1])),
                                    text=self.text,

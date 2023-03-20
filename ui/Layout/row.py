@@ -55,6 +55,9 @@ class Row:
         self.rowFrame.destroy()
 
     def refresh(self):
+        """
+        Force reloads the row and elements within
+        """
         if self.expand:
             self.rowFrame = Frame(self.parentFrame, height=self.height, width=self.maxWidth)
             self.rowFrame.pack()
@@ -70,6 +73,9 @@ class Row:
             self.contentRight.refresh()
 
     def setMaxWidth(self, maxWidth: int, expand: Optional[bool] = None):
+        """
+        Used to set the responsive width of the row
+        """
         self.maxWidth = maxWidth
         if expand is not None:
             self.expand = expand
@@ -80,12 +86,20 @@ class Row:
         self.refresh()
 
     def setContentLeft(self, content):
+        """
+        Sets component to row content
+        """
         if content is None:
             return
         content.parentFrame = self.rowFrame
         self.contentLeft = content
 
     def setContentRight(self, content):
+        """
+        Sets component to row content
+        :param content:
+        :return:
+        """
         if content is None:
             return 
         content.parentFrame = self.rowFrame
@@ -104,6 +118,9 @@ class Row:
             self.contentRight.build(1)
 
     def remove(self, left=False, right=False):
+        """
+        Removes content from the tkinter window without deleting the row
+        """
         if left and self.contentLeft is not None:
             if hasattr(self.contentLeft, "destroy"):
                 self.contentLeft.destroy()

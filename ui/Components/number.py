@@ -8,6 +8,9 @@ from ui.Components import Component
 
 
 class NumberInput(Component):
+    """
+    Tkinter integer input
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.fromVal = NoneTypeCheck(style.get("from"), 0)
@@ -28,6 +31,9 @@ class NumberInput(Component):
             self.refresh()
 
     def setValue(self, value: Optional[int] = None):
+        """
+        Inserts value to the entry
+        """
         if value is None:
             value = self.value
         else:
@@ -40,6 +46,9 @@ class NumberInput(Component):
         self.component.insert(INSERT, value)
 
     def get(self):
+        """
+        Validates input and rounds to range
+        """
         try:
             data = self.component.get()
             if isinstance(data, str):

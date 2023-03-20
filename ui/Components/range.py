@@ -8,6 +8,9 @@ from ui.Components import Component
 
 
 class Range(Component):
+    """
+    Tkinter range value
+    """
     def __init__(self, parent: Frame, style: Dict, geometry: Tuple[int] | List[int]):
         super().__init__(parent, style, geometry)
         self.start = NoneTypeCheck(style.get("start"), 0)
